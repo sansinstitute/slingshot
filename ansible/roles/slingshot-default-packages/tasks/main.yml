@@ -1,0 +1,36 @@
+---
+- name: Add apt packages
+  apt:
+    update_cache: yes
+    name:
+    - cl-base64
+    - coreutils
+    - curl
+    - expect
+    - firefox
+    - ftp
+    - gawk
+    - gcc
+    - gdb
+    - gedit
+    - git
+    - hping3
+    - iputils-ping
+    - jq
+    - lsof
+    - net-tools
+    - netcat
+    - nmap
+    - openvpn
+    - openvpn-systemd-resolved
+    - psmisc
+    - python
+    - python-pip
+    - python3
+    - python3-pip
+    - smbclient
+    - tcpdump
+    - unzip
+    - wapiti
+    - wireshark
+    - xterm

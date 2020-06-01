@@ -1,0 +1,36 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - make
+    - build-essential
+
+- name: Download and unarchive asleap 2.2
+  unarchive:
+    src: "http://www.willhackforsushi.com/code/asleap/2.2/asleap-2.2.tgz"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Move asleap files into target install path
+  shell: "rm -rf {{ asleap_install_path }}; mv /tmp/asleap-2.2/ {{ asleap_install_path }}/"
+  args:
+    warn: no
+
+- name: Build asleap
+  make:
+    chdir: "{{ asleap_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ asleap_install_path }}/{{ asleap_item }}"
+    dest: "{{ symlink_path }}/{{ asleap_item }}"
+    state: link
+  loop:
+  - asleap
+  - genkeys
+  loop_control:
+    loop_var: asleap_item
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

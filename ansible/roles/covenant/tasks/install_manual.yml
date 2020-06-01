@@ -1,0 +1,44 @@
+---
+- name: Install .NET Core prerequisite
+  include_role:
+    name: dotnet
+  vars:
+    override:
+      dotnet_version: "2.2"
+
+- name: Checkout latest covenant code
+  git:
+    repo: "https://github.com/cobbr/Covenant.git"
+    dest: "{{ covenant_install_path }}"
+
+- name: Build covenant
+  shell: ". /etc/profile && dotnet build"
+  args:
+    chdir: "{{ covenant_install_path }}"
+    
+- name: Create launcher script
+  blockinfile:
+    path: "{{ covenant_install_path }}/covenant-bootstrap.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+      
+      if [ $(/usr/bin/id -u) -ne 0 ]; then
+          echo "Please run Covenant as root."
+          exit
+      fi
+      
+      echo "Starting Covenant..."
+      
+      cd {{ covenant_install_path }}/Covenant
+      dotnet run
+      
+- name: Create symlink
+  file:
+    src: "{{ covenant_install_path }}/covenant-bootstrap.sh"
+    dest: "{{ symlink_path }}/covenant"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

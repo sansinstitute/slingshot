@@ -1,0 +1,30 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - perl
+    - libperl5.26
+    - libnet-snmp-perl
+    - libnumber-bytes-human-perl
+
+- name: Create snmpcheck directory
+  file:
+    path: "{{ snmpcheck_install_path }}"
+    state: directory
+    mode: 0755
+
+- name: Download snmpcheck
+  get_url:
+    url: http://www.nothink.org/codes/snmpcheck/snmpcheck-1.8.pl
+    dest: "{{ snmpcheck_install_path }}/snmpcheck.pl"
+    mode: 0755
+
+- name: Create symlink
+  file:
+    src: "{{ snmpcheck_install_path }}/snmpcheck.pl"
+    dest: "{{ symlink_path }}/snmpcheck"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

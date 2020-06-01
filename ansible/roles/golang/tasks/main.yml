@@ -1,0 +1,42 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: curl
+
+- import_tasks: "tasks/check_installed.yml"
+
+- name: Install Go from source
+  block:
+  - name: Download and unarchive Go binary
+    unarchive:
+      src: "https://dl.google.com/go/go{{ golang_version }}.linux-amd64.tar.gz"
+      dest: /usr/local
+      remote_src: yes
+
+  - name: Add the Go bin directory to the PATH environment variable for all users
+    copy:
+      src: go-bin.sh
+      dest: /etc/profile.d
+
+  - name: Set GOPATH for all users
+    copy:
+      src: go-path.sh
+      dest: /etc/profile.d
+
+  - import_tasks: "tasks/mark_installed.yml"
+  when: not installed
+
+- name: Test for go command
+  shell: "/bin/sh -c 'command -v go >/dev/null 2>&1'"
+  register: is_installed
+  ignore_errors: yes
+
+- name: Test assertions
+  assert:
+    that:
+      - is_installed.rc == 0
+    fail_msg: "Golang did not install correctly."

@@ -1,0 +1,40 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - build-essential
+    - libssl-dev
+    - zlib1g-dev
+    - yasm
+    - pkg-config
+    - libgmp-dev
+    - libpcap-dev
+    - libbz2-dev
+    - ocl-icd-opencl-dev
+    - opencl-headers
+    - pocl-opencl-icd
+
+- name: Download john via git
+  git:
+    repo: https://github.com/magnumripper/JohnTheRipper.git
+    dest: "{{ john_install_path }}"
+    version: "{{ john_version }}"
+
+- name: Make john
+  shell: ./configure CPPFLAGS='-DJOHN_SYSTEMWIDE -DJOHN_SYSTEMWIDE_EXEC="\"/usr/local/bin\"" -DJOHN_SYSTEMWIDE_HOME="\"/usr/local/share/john\""' && make -s clean && make -sj`nproc` strip
+  args:
+    chdir: "{{ john_install_path }}/src/"
+
+- name: Clean up and install
+  shell: |
+    rm -rf run/*.dSYM
+    mv run/{john,john-*,*2john,unshadow,unique,undrop,unafs,base64conv,tgtsnarf,mkvcalcproba,genmkvpwd,calc_stat,raw2dyna,cprepair,SIPdump} /usr/local/bin
+    mkdir -p /usr/local/share/john
+    cp -a run/* /usr/local/share/john
+    mv /usr/local/share/john/*.{pl,py,rb} /usr/local/share/john/{relbench,benchmark-unify,mailer,makechr} /usr/local/bin
+  args:
+    chdir: "{{ john_install_path }}"
+    executable: /bin/bash
+
+- import_tasks: "tasks/mark_installed.yml"

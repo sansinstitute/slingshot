@@ -1,0 +1,23 @@
+---
+- name: Install python-pexpect
+  apt:
+    update_cache: yes
+    name: python-pexpect
+
+- name: Download RITA installer
+  get_url:
+    url: "https://github.com/activecm/rita/releases/download/v{{ rita_version }}/install.sh"
+    dest: /tmp/rita-installer.sh
+
+- name: Execute RITA installer
+  expect:
+    command: "/bin/bash /tmp/rita-installer.sh {% if not rita_install_bro %}--disable-bro{% endif %} {% if not rita_install_mongo %}--disable-mongo{% endif %} --version v{{ rita_version }}"
+    timeout: 300
+    echo: yes
+    responses:
+      "Would you like to re-install": "y"
+      "Would you like to continue running the Bro configuration script": "y"
+      "Would you like to include it as a sniff interface": "y"
+      "Would you like to replace the existing node.cfg with the above file": "y"
+
+- import_tasks: "tasks/mark_installed.yml"

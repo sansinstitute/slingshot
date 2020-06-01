@@ -1,0 +1,28 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - unzip
+    - mingw-w64
+    - binutils-mingw-w64
+    - g++-mingw-w64
+
+- name: Create sliver path
+  file:
+    path: "{{ sliver_install_path }}"
+    state: directory
+    
+- name: Download and unarchive sliver
+  unarchive: 
+    src: "{{ sliver_file }}"
+    dest: "{{ sliver_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ sliver_install_path }}/sliver-server"
+    dest: "{{ symlink_path }}/sliver-server"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

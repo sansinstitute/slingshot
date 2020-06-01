@@ -1,0 +1,32 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+#- name: Validate variables
+#  assert:
+#    that:
+#    - nikto_version is regex("v\d+\.\d+\.\d+")
+
+- import_tasks: "tasks/check_installed.yml"
+
+- name: Install sherlock manually
+  block:
+  - name: Download sherlock via Git
+    git:
+      repo: https://github.com/jamesshew/Sherlock.git
+      dest: "{{ sherlock_install_path }}"
+
+  - import_tasks: "tasks/mark_installed.yml"
+  when: not installed
+
+
+#- name: Test for Responder command
+#  shell: "command -v {{ install_path }}/Responder.py >/dev/null 2>&1"
+#  register: is_installed
+#  ignore_errors: yes
+#
+#- name: Test Responder assertions
+#  assert:
+#    that:
+#      - is_installed.rc == 0
+#    fail_msg: "Responder did not installed correctly."

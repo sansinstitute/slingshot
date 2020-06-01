@@ -1,0 +1,20 @@
+---
+- name: Download PadBuster via Git
+  git:
+    repo: https://github.com/AonCyberLabs/PadBuster.git
+    dest: "{{ padbuster_install_path }}"
+    force: yes
+    
+- name: Set PadBuster to executable
+  file:
+    path: "{{ padbuster_install_path }}/padBuster.pl"
+    mode: 0755
+
+- name: Create symlink
+  file:
+    src: "{{ padbuster_install_path }}/padBuster.pl"
+    dest: "{{ symlink_path }}/padbuster"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

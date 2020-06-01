@@ -1,0 +1,4 @@
+---
+wordlists_install_path: /usr/share/dict
+wordlists_sources:
+- rockyou.txt.zip

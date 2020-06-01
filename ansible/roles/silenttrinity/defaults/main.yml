@@ -1,0 +1,4 @@
+---
+silenttrinity_install_path: /opt/silenttrinity
+silenttrinity_url: https://github.com/byt3bl33d3r/SILENTTRINITY.git
+silenttrinity_version: "HEAD" # This must correspond to a tag in https://github.com/byt3bl33d3r/SILENTTRINITY

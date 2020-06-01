@@ -1,0 +1,26 @@
+---
+- set_fact:
+    temp: "{{ module | regex_replace('^.*/','') }}"
+
+- name: Install PtF module
+  block:
+  - name: "Install PtF module: {{ temp }}"
+    shell: |
+      ./ptf <<EOF
+      use modules/{{ module }}
+      install
+      upgrade
+      EOF
+    args:
+      chdir: "{{ ptf_install_path }}"
+
+  - name: Mark installation complete
+    set_fact:
+      software: "{{ software | combine({ temp+'_installed': true }) }}"
+      
+  - name: "Write state to {{ state_path }}"
+    copy:
+      content: ""
+      dest: "{{ state_path }}/{{ temp }}_installed"
+      mode: '0644'
+  when: not (software[temp+'_installed'] | default(false))

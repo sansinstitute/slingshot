@@ -1,0 +1,4 @@
+---
+dotnet_install_path: /opt/dotnet
+dotnet_url: https://dotnetwebsite.azurewebsites.net/download/dotnet-core/scripts/v1/dotnet-install.sh
+dotnet_version: "3.0"

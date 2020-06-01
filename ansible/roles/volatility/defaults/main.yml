@@ -1,0 +1,3 @@
+---
+volatility_install_path: /opt/volatility
+volatility_file: volatility_2.6_lin64_standalone.zip

@@ -1,0 +1,44 @@
+---
+- name: Install Docker
+  include_role:
+    name: docker
+  vars:
+    method: manual
+    
+- name: Checkout latest covenant code
+  git:
+    repo: "https://github.com/cobbr/Covenant.git"
+    dest: "{{ covenant_install_path }}"
+    
+- name: Initialize git submodules
+  shell: "git submodule update --init --recursive"
+  args:
+    chdir: "{{ covenant_install_path }}"
+
+- name: Build docker container
+  shell: "docker build -t covenant ."
+  args:
+    chdir: "{{ covenant_install_path }}/Covenant"
+    #
+#- name: Run docker initialization
+#  shell: "docker run -p 7443:7443 -p 8080:8080 -p 4433:4433 --name covenant -v /opt/covenant/Covenant/Data:/app/Data covenant --username AdminUser --password MYPASSWORD --computername 0.0.0.0"
+#  args:
+#    chdir: "{{ covenant_install_path }}/Covenant"
+
+- name: Create launcher script
+  blockinfile:
+    path: "{{ covenant_install_path }}/covenant-bootstrap.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+      docker start covenant -ai
+
+- name: Create symlink
+  file:
+    src: "{{ covenant_install_path }}/covenant-bootstrap.sh"
+    dest: "{{ symlink_path }}/covenant"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

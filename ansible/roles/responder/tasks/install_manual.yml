@@ -1,0 +1,13 @@
+---
+- git:
+    repo: https://github.com/SpiderLabs/Responder.git
+    dest: "{{ responder_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ responder_install_path }}/Responder.py"
+    dest: "{{ symlink_path }}/responder"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

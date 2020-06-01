@@ -1,0 +1,14 @@
+---
+- name: Download nikto via Git
+  git:
+    repo: https://github.com/sullo/nikto.git
+    dest: "{{ nikto_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ nikto_install_path }}/program/nikto.pl"
+    dest: "{{ symlink_path }}/nikto"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

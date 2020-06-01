@@ -1,0 +1,10 @@
+---
+- name: "Mark {{ role_name }} as installed"
+  set_fact:
+    software: "{{ software | combine({ role_name+lookup('vars', role_name+'_version', default='')+'_installed': true }) }}"
+    
+- name: "Write state to {{ state_path }}"
+  copy:
+    content: ""
+    dest: "{{ state_path }}/{{ role_name }}{{ lookup('vars', role_name+'_version', default='') }}_installed"
+    mode: '0644'

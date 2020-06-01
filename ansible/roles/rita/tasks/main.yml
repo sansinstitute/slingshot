@@ -1,0 +1,33 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "manual")
+    - rita_version is match('\d.\d.\d')
+    - rita_install_bro | type_debug == 'bool'
+    - rita_install_mongo | type_debug == 'bool'
+    - rita_internal_subnets is iterable
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+
+- name: Configure RITA InternalSubnets
+  lineinfile:
+    path: /etc/rita/config.yaml
+    regexp: "^\\s*InternalSubnets:"
+    line: "    InternalSubnets: {{ rita_internal_subnets | to_json }}"
+    insertafter: "Filtering:"
+
+- name: Start MongoDB
+  service:
+    name: mongod
+    state: started
+
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: rita

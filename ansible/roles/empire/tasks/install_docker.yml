@@ -1,0 +1,25 @@
+---
+- name: Install Docker
+  include_role:
+    name: docker
+
+- name: Create Veil container
+  shell: "docker create -it -v {{ veil_install_path }}:/var/lib/veil/output:Z mattiasohlsson/veil"
+
+- name: Create launcher script
+  blockinfile:
+    path: "{{ veil_install_path }}/veil.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+      docker run -it -v {{ veil_install_path }}:/var/lib/veil/output:Z mattiasohlsson/veil
+
+- name: Create symlink
+  file:
+    src: "{{ veil_install_path }}/veil.sh"
+    dest: "{{ symlink_path }}/veil"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

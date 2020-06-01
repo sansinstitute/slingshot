@@ -1,0 +1,22 @@
+---
+- name: Create flamingo install directory
+  file:
+    path: "{{ flamingo_install_path }}/"
+    state: directory
+
+- name: Download flamingo
+  get_url:
+    url: "https://github.com/atredispartners/flamingo/releases/download/v{{ flamingo_version }}/flamingo-linux-amd64"
+    dest: "{{ flamingo_install_path }}/"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create symlink
+  file:
+    src: "{{ flamingo_install_path }}/flamingo-linux-amd64"
+    dest: "{{ symlink_path }}/flamingo"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

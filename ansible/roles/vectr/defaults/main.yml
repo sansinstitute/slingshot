@@ -1,0 +1,5 @@
+---
+vectr_install_path: /opt/vectr
+
+vectr_hostname: "vectr.internal"
+vectr_port: 8081

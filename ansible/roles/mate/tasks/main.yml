@@ -1,0 +1,181 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+  
+- import_tasks: "tasks/check_installed.yml"
+
+- block:
+  - name: Add apt repository for Magnus magnifier
+    apt_repository:
+      repo: ppa:flexiondotorg/magnus
+      
+  - name: Install MATE desktop
+    apt:
+      update_cache: yes
+      name:
+      - mate-desktop-environment-core
+      - mate-utils
+      - mate-themes
+      - ubuntu-artwork
+      - lightdm
+      - lightdm-gtk-greeter
+      - magnus
+      - onboard
+      - open-vm-tools-desktop
+      - orca
+      - pulseaudio
+      - pavucontrol
+      - eom
+      - language-selector-gnome
+      
+  - name: Create Orca application menu entry
+    copy:
+      dest: /usr/share/applications/orca.desktop
+      mode: 0644
+      content: |
+        [Desktop Entry]
+        Name=Orca
+        GenericName=Orca
+        Comment=Visual Assistive Access Tool
+        Exec=orca -r -s
+        Terminal=false
+        Type=Application
+        Categories=Utility;Accessibility;
+        Keywords=onscreen;keyboard;accessibility;utility;
+        Icon=preferences-desktop-accessibility
+        X-Ubuntu-Gettext-Domain=orca
+      
+  - name: Remove unwanted MATE components
+    apt:
+      state: absent
+      name:
+      - update-notifier
+
+  - name: Disable (most) user directories
+    lineinfile:
+      path: /etc/xdg/user-dirs.conf
+      regexp: '^enabled='
+      line: 'enabled=False'
+
+  - name: Start lightdm service
+    systemd:
+      state: started
+      name: lightdm.service
+
+  - name: Copy Slingshot background
+    copy:
+      src: backgrounds/
+      dest: /usr/share/backgrounds/
+      force: yes
+
+  - name: Add apt repository for Papirus theme
+    apt_repository:
+      repo: ppa:papirus/papirus
+
+  - name: Install Papirus icons
+    apt:
+      update_cache: yes
+      name: papirus-icon-theme
+
+  - name: Change the login background
+    lineinfile:
+      path: /etc/lightdm/lightdm-gtk-greeter.conf
+      regexp: '^#?theme-name=.*$'
+      line: 'theme-name=BlueMenta'
+      
+  - name: Change the login theme
+    lineinfile:
+      path: /etc/lightdm/lightdm-gtk-greeter.conf
+      regexp: '^#?background=.*$'
+      line: 'background=/usr/share/backgrounds/{{ login_background }}'
+
+  - import_tasks: "tasks/mark_installed.yml"
+  when: not installed
+
+- block:
+  - name: "Copy panel config file"
+    copy:
+      src: user
+      dest: ~/.config/dconf/
+
+  - name: Configure MATE appearance
+    shell: |
+      # Attach to existing DBUS session
+      export $(dbus-launch)
+
+      # Change desktop background
+      gsettings set org.mate.background picture-filename /usr/share/backgrounds/{{ desktop_background }}
+      gsettings set org.mate.background picture-options 'zoom'
+
+      # Show desktop icons
+      gsettings set org.mate.background show-desktop-icons true
+
+      # Show trash icon
+      gsettings set org.mate.caja.desktop trash-icon-visible true
+
+      # Show home icon
+      gsettings set org.mate.caja.desktop home-icon-visible true
+
+      # Disable lock screen
+      gsettings set org.mate.lockdown disable-lock-screen true
+      gsettings set org.mate.session idle-delay 0
+
+      # Set theme
+      gsettings set org.mate.interface gtk-theme 'BlueMenta'
+      gsettings set org.mate.interface icon-theme 'Papirus-Light'
+      gsettings set org.mate.Marco.general theme 'BlueMenta'
+      gsettings set org.mate.peripherals-mouse cursor-size 18
+    args:
+      executable: /bin/bash
+
+  - name: Configure desktop icons
+    shell: |
+      # Attach to existing DBUS session
+      export $(dbus-launch)
+
+      # Set up desktop shortcuts
+      if [ ! -d ~/Desktop ];then
+        mkdir ~/Desktop
+      fi
+      cp /usr/share/applications/firefox.desktop ~/Desktop/
+      cp /usr/share/applications/mate-terminal.desktop ~/Desktop/
+      sed -i 's/^Exec=mate-terminal/Exec=mate-terminal --working-directory=\"~\"/' ~/Desktop/mate-terminal.desktop
+      chmod +x ~/Desktop/*.desktop
+    args:
+      executable: /bin/bash
+      
+  - name: Create autostart directory
+    file:
+      path: "~/.config/autostart"
+      state: directory
+      mode: 0755
+      
+  - name: Create enable audio autostart file
+    copy:
+      dest: "~/.config/autostart/Enable-Audio.desktop"
+      mode: 0644
+      content: |
+        [Desktop Entry]
+        Type=Application
+        Name=Enable Audio
+        Exec=sh -c 'pactl set-sink-mute 0 0; pactl set-sink-volume 0 65536; rm ~/.config/autostart/Enable-Audio.desktop'
+        X-GNOME-Autostart-enabled=true
+
+  - name: Create feedback shortcut
+    copy:
+      dest: "~/Desktop/Feedback.desktop"
+      mode: 0644
+      content: |
+        [Desktop Entry]
+        Encoding=UTF-8
+        Name=Feedback
+        Type=Link
+        URL={{ feedback_url }}
+        Icon=text-html
+        
+  - name: Mark configuration complete
+    set_fact:
+      software: "{{ software | combine({ role_name+lookup('vars', role_name+'_version', default='')+'_configured': true }) }}"
+  when: not (software[role_name+lookup('vars', role_name+'_version', default='')+'_configured'] | default(false))
+  become: yes
+  become_user: "{{ user_name }}"

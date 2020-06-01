@@ -1,0 +1,27 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - git
+    - make
+    - build-essential
+    - clang
+
+- name: Checkout latest cowpatty code
+  git:
+    repo: https://github.com/joswr1ght/cowpatty.git
+    dest: "{{ cowpatty_install_path }}"
+
+- name: Build cowpatty
+  make:
+    chdir: "{{ cowpatty_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ cowpatty_install_path }}/cowpatty"
+    dest: "{{ symlink_path }}/cowpatty"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

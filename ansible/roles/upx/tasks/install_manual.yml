@@ -1,0 +1,24 @@
+---
+- name: Download upx
+  get_url:
+    url: "https://github.com/upx/upx/releases/download/v{{ upx_version }}/upx-{{ upx_version }}-amd64_linux.tar.xz"
+    dest: "/tmp/"
+
+- name: Unzip upx
+  unarchive:
+    src: "/tmp/upx-{{ upx_version }}-amd64_linux.tar.xz"
+    dest: "/tmp/"
+
+- name: Move upx files into target install path
+  shell: "rm -rf {{ upx_install_path }}/; mv /tmp/upx-{{ upx_version }}-amd64_linux/ {{ upx_install_path }}/"
+  args:
+    warn: no
+
+- name: Create symlink
+  file:
+    src: "{{ upx_install_path }}/upx"
+    dest: "{{ symlink_path }}/upx"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

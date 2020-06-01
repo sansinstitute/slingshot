@@ -1,0 +1,24 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - reconng_version is regex("v\d+\.\d+\.\d+") or reconng_version is match("master")
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+
+#- name: Test for Responder command
+#  shell: "command -v {{ install_path }}/Responder.py >/dev/null 2>&1"
+#  register: is_installed
+#  ignore_errors: yes
+#
+#- name: Test Responder assertions
+#  assert:
+#    that:
+#      - is_installed.rc == 0
+#    fail_msg: "Responder did not installed correctly."

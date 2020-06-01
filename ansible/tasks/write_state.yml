@@ -1,0 +1,7 @@
+---
+- name: "Write state to {{ state_path }}"
+  copy:
+    content: ""
+    dest: "{{ state_path }}/{{ item.key }}"
+    mode: '0644'
+  with_dict: "{{ software }}"

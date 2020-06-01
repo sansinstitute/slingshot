@@ -1,0 +1,28 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "manual" or method == "local")
+    
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_local.yml"
+  when: (method is not defined or method == 'local') and not installed
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+  
+- name: Add initialization to post-user.sh script
+  lineinfile:
+    path: "{{ user_home }}/post-user.sh"
+    line: "msfdb init --user {{ user_name }} --pass {{ user_name }}"
+    insertafter: "^### START ROLE-SPECIFIC TASKS$"
+
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: msfconsole

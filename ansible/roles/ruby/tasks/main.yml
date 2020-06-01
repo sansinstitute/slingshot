@@ -1,0 +1,47 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - curl
+    - build-essential
+
+- name: Add rbenv to PATH
+  lineinfile:
+    path: "{{ ruby_item }}"
+    create: yes
+    line: export PATH="$HOME/.rbenv/bin:$PATH"
+  loop:
+    - "~/.profile"
+    - "~/.bashrc"
+  loop_control:
+    loop_var: ruby_item
+
+- name: Add rbenv to PATH for current execution
+  shell: "export PATH=$HOME/.rbenv/bin:$PATH"
+
+- name: Install rbenv w/ ruby-build
+  shell: "curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash"
+  ignore_errors: yes
+  args:
+    creates: "~/.rbenv"
+    warn: false
+
+- name: Add rbenv init to profile
+  lineinfile:
+    path: "{{ ruby_item }}"
+    create: yes
+    line: eval "$(rbenv init -)"
+  loop:
+    - "~/.profile"
+    - "~/.bashrc"
+  loop_control:
+    loop_var: ruby_item
+
+- name: Install Ruby
+  shell: "~/.rbenv/bin/rbenv install -s {{ ruby_version }}"
+  args:
+    creates: "~/.rbenv/versions/{{ ruby_version }}"

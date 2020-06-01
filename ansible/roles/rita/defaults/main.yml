@@ -1,0 +1,7 @@
+---
+rita_version: "3.1.1"
+
+rita_install_bro: yes
+rita_install_mongo: yes
+
+rita_internal_subnets: ['10.0.0.0/8','172.16.0.0/12','192.168.0.0/16']

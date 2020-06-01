@@ -1,0 +1,42 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - python3
+    - python3-pip
+
+- name: Install virtualenv
+  pip:
+    name: virtualenv
+
+- name: Download koadic via Git
+  git:
+    repo: https://github.com/zerosum0x0/koadic.git
+    dest: "{{ koadic_install_path }}"
+
+- name: Install pip requirements
+  pip:
+    requirements: "{{ koadic_install_path }}/requirements.txt"
+    virtualenv: "{{ koadic_install_path }}/venv"
+    virtualenv_python: python3
+
+- name: Create launcher script
+  blockinfile:
+    path: "{{ koadic_install_path }}/koadic-bootstrap.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+      cd {{ koadic_install_path }}
+      . venv/bin/activate
+      ./koadic "$@"
+
+- name: Create symlink
+  file:
+    src: "{{ koadic_install_path }}/koadic-bootstrap.sh"
+    dest: "{{ symlink_path }}/koadic"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

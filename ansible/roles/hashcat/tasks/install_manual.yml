@@ -1,0 +1,42 @@
+---
+- name: Download hashcat
+  get_url:
+    url: "https://github.com/hashcat/hashcat/releases/download/v{{ hashcat_version }}/hashcat-{{ hashcat_version }}.7z"
+    dest: "/tmp/"
+
+- name: Unzip hashcat
+  shell: "7z x hashcat-{{ hashcat_version }}.7z"
+  args:
+    chdir: "/tmp/"
+
+- name: Move hashcat files into target install path
+  shell: "rm -rf {{ hashcat_install_path }}/; mv /tmp/hashcat-{{ hashcat_version }}/ {{ hashcat_install_path }}/"
+  args:
+    warn: no
+    
+- name: Create hashcat group
+  group:
+    name: hashcat
+    state: present
+    
+- name: Adding user to hashcat group 
+  user:
+    name: "{{ user_name }}"
+    groups: hashcat
+    append: yes
+    
+- name: Change ownership of hashcat install directory
+  file:
+    path: "{{ hashcat_install_path }}"
+    group: hashcat
+    mode: g+w
+    recurse: yes
+
+- name: Create symlink
+  file:
+    src: "{{ hashcat_install_path }}/hashcat64.bin"
+    dest: "{{ symlink_path }}/hashcat"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

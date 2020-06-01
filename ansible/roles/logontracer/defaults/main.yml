@@ -1,0 +1,4 @@
+---
+logontracer_install_path: /opt/logontracer
+logontracer_host: 127.0.0.1
+logontracer_port: 8080

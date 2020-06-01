@@ -1,0 +1,17 @@
+---
+- name: Copy Powershell package
+  copy:
+    src: "{{ powershell_file }}"
+    dest: "/tmp/powershell.deb"
+    mode: '0744'
+
+- name: Install Powershell package
+  command: "dpkg -i /tmp/powershell.deb"
+  ignore_errors: yes
+
+- name: Install Powershell dependencies
+  command: "apt-get install -f -y"
+  args:
+    warn: no
+
+- import_tasks: "tasks/mark_installed.yml"

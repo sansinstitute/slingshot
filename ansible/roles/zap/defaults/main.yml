@@ -1,0 +1,4 @@
+---
+zap_install_path: /opt/zap
+zap_version: "2.8.0" # This must correspond to a valid version (full release, not pre-release) in https://github.com/zaproxy/zaproxy/releases/
+zap_url: https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAP_2.8.0_Linux.tar.gz # This is necessary because going from 2.7.0 to 2.8.0 they started adding a 'v' to the url where there was not one before

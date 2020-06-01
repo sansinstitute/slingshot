@@ -1,0 +1,4 @@
+---
+- name: "Check if {{ role_name }} is already installed"
+  set_fact:
+    installed: "{{ software[role_name+lookup('vars', role_name+'_version', default='')+'_installed'] | default(false) }}"

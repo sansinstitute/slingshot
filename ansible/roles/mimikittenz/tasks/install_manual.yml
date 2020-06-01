@@ -1,0 +1,7 @@
+---
+- name: Download mimikittenz via Git
+  git:
+    repo: https://github.com/jamesshew/mimikittenz.git
+    dest: "{{ mimikittenz_install_path }}"
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,10 @@
+labs/** filter=lfs diff=lfs merge=lfs -text
+ansible/roles/hashcat/files/opencl_runtime_16.1.2_x64_rh_6.4.0.37.tgz filter=lfs diff=lfs merge=lfs -text
+ansible/roles/nessus/files/Nessus-8.6.0-ubuntu1110_amd64.deb filter=lfs diff=lfs merge=lfs -text
+ansible/roles/wordlists/files/** filter=lfs diff=lfs merge=lfs -text
+ansible/roles/metasploit/files/metasploit-framework_5.0.72+20200128112027_1rapid7-1_amd64.deb filter=lfs diff=lfs merge=lfs -text
+ansible/roles/volatility/files/volatility_2.6_lin64_standalone.zip filter=lfs diff=lfs merge=lfs -text
+ansible/roles/neo4j/files/neo4j-community-4.0.2-unix.tgz filter=lfs diff=lfs merge=lfs -text
+ansible/roles/powershell/files/powershell_6.2.3-1.ubuntu.18.04_amd64.deb filter=lfs diff=lfs merge=lfs -text
+ansible/roles/sliver/files/sliver-server_linux.zip filter=lfs diff=lfs merge=lfs -text
+ansible/roles/vectr/files/sra-vectr-runtime-5.5.7-ce.zip filter=lfs diff=lfs merge=lfs -text

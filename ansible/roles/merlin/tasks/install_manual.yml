@@ -1,0 +1,33 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - golang
+    - p7zip
+
+- name: Create merlin path
+  file:
+    path: "{{ merlin_install_path }}"
+    state: directory
+    
+- name: Download merlin
+  shell: "wget {{ merlin_url }} -O merlin.7z"
+  args:
+    chdir: "{{ merlin_install_path }}"
+    warn: false
+    
+- name: Unzip merlin
+  shell: "7z x -y -pmerlin merlin.7z"
+  args:
+    chdir: "{{ merlin_install_path }}"
+    warn: false
+
+- name: Create symlink
+  file:
+    src: "{{ merlin_install_path }}/merlinServer-Linux-x64"
+    dest: "{{ symlink_path }}/merlin"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

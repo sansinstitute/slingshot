@@ -1,0 +1,18 @@
+---
+- name: Install docker
+  shell: "curl -sSL https://get.docker.com/ | sh"
+  ignore_errors: yes
+  args:
+    warn: false
+
+- name: Install docker-compose
+  shell: "curl -L https://github.com/docker/compose/releases/download/1.25.0-rc2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+  args:
+    warn: false
+
+- name: Mark docker-compose executable
+  file:
+    path: /usr/local/bin/docker-compose
+    mode: a+x
+
+- import_tasks: "tasks/mark_installed.yml"

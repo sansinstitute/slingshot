@@ -1,0 +1,4 @@
+---
+sliver_install_path: /opt/sliver
+sliver_file: sliver-server_linux.zip
+sliver_url: https://github.com/BishopFox/sliver/releases/download/v0.0.6-alpha/sliver-server_linux.zip

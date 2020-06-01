@@ -1,0 +1,3 @@
+---
+upx_install_path: /opt/upx
+upx_version: "3.95"

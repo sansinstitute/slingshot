@@ -1,0 +1,18 @@
+---
+- name: Download .NET Core installer
+  get_url:
+    url: "{{ dotnet_url }}"
+    dest: /tmp/dotnet_installer
+    mode: 0755
+
+- name: Run .NET Core installer
+  shell: "/tmp/dotnet_installer -Channel {{ dotnet_version }} -InstallDir {{ dotnet_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ dotnet_install_path }}/dotnet"
+    dest: "{{ symlink_path }}/dotnet"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

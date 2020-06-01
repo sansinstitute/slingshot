@@ -1,0 +1,38 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - git
+    - make
+
+- import_tasks: "tasks/check_installed.yml"
+
+- block:
+  - name: Go get latest evilginx2 code
+    shell: "{{ item }}"
+    with_items:
+    - "/bin/sh -c 'go get -u github.com/kgretzky/evilginx2'"
+    args:
+      warn: false
+
+  - name: Build evilginx2
+    shell: "{{ item }}"
+    with_items:
+    - "/bin/sh -c 'cd {{ lookup('env', 'GOPATH') }}/src/github.com/kgretzky/evilginx2 && make'"
+    args:
+      warn: false
+
+  - name: Install evilginx2
+    shell: "{{ item }}"
+    with_items:
+    - "/bin/sh -c 'cd {{ lookup('env', 'GOPATH') }}/src/github.com/kgretzky/evilginx2 && make install'"
+    args:
+      warn: false
+
+  - import_tasks: "tasks/mark_installed.yml"
+  when: not installed
+  become: no

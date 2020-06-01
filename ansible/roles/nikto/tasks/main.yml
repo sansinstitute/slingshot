@@ -1,0 +1,22 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "manual")
+
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: perl
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: nikto

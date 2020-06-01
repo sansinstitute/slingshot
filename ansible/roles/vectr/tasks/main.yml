@@ -1,0 +1,24 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "manual")
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+
+#- name: Test for command
+#  shell: "command -v vectr >/dev/null 2>&1"
+#  register: is_installed
+#  ignore_errors: yes
+#
+#- name: Test assertions
+#  assert:
+#    that:
+#    - is_installed.rc == 0
+#    fail_msg: "VECTR did not install correctly."

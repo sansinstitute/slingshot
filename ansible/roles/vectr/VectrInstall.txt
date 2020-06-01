@@ -1,0 +1,96 @@
+SANS SEC VM VECTR Installation Instructions
+
+Note: These instructions contain steps to correct some issues with the VM found during the install.  Apt-get was broken preventing the installation of VECTR dependencies.
+
+1.	Get apt-get upgrade working:
+sudo rm -f /var/lib/dpkg/info/initramfs-tools.post*
+sudo rm -f /var/lib/dpkg/info/initramfs-tools.pre*
+
+sudo rm -f /var/lib/dpkg/info/bcmwl-kernel-source.post*
+sudo rm -f /var/lib/dpkg/info/bcmwl-kernel-source.pre*
+sudo dpkg --configure -a
+sudo apt-get autoremove
+
+sudo rm /var/lib/apt/lists/* -vfr
+sudo rm -r /var/cache/apt/archives/apt-fast
+sudo apt-get clean
+
+sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules
+sudo touch /etc/udev/rules.d/70-persistent-net.rules
+
+2.	Run apt-get update/upgrade: (when grub asks, keep the local version)
+sudo apt-get update
+sudo apt-get upgrade
+
+3.	Install Docker.  (installs docker-compose from docker website, ubuntu package has out of date dependencies)
+sudo apt-get remove docker docker-engine docker.io containerd runc 
+sudo apt-get update
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+	
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+4.	Setup VECTR Install environment
+sudo mkdir /opt/vectr/staging -p
+cd /opt/vectr/staging
+sudo git clone https://github.com/SecurityRiskAdvisors/VECTR.git .
+sudo chmod +x *.sh
+sudo ./vectr-install.sh
+(Please review next steps for installer options) 
+5.	Follow the prompts to install VECTR as documented below
+Enter a name for this vectr configuration [sravectr]: vectr
+Enter the VECTR OS user [sec560]:              
+Enter the VECTR deploy directory (this will append /app for where the vectr web app deploys) [/home/sec560/vectr]: /opt/vectr
+Enter the VECTR data directory [/opt/vectr/data]: 
+VECTR hostname [vectr.internal]: vectr.local
+VECTR port [8081]: 
+  WARNING!! SSL Cert creation can vary between OpenSSL versions. If you do not specify an existing key, a self-signed cert will generate. 
+VECTR SSL certificate existing crt file (Please leave blank if none. Ex: /opt/vectr/app/config/ssl.crt) []: 
+VECTR SSL certificate existing key file (Please leave blank if none. Ex: /opt/vectr/app/config/ssl.key) []: 
+Enter advanced configuration options? [y/N]: 
+
+Configuration data: 
+  VECTR configuration name: vectr
+  VECTR OS user: sec564
+  VECTR deploy directory: /opt/vectr
+  VECTR data directory: /opt/vectr/data
+  VECTR hostname: vectr.local
+  VECTR port: 8081
+  VECTR docker bridge subnet: 10.0.27.0/24
+  VECTR docker internal container names: vectr_tomcat and vectr_mongo
+  VECTR Mongo DB port: 27018
+  CAS directory: /opt/vectr/app/cas
+  VECTR OpenSSL self-signed cert will be created.
+
+6.	Turn on experimental VECTR data import feature 
+sudo vim /opt/vectr/app/static/features.json
+(Change the contents of features.json to the following data)
+[{ "key": "dataImport", "active": true, "name": "Data Import", "description": "Ability to import VECTR data (controls nav item)" }]
+	
+7.	Correct VECTR Permissions and start VECTR (This may take 90 seconds or more to deploy) 
+sudo chown root:hacker-tools /opt/vectr -R
+cd /opt/vectr/app
+sudo docker-compose -f docker-compose.yml -f devSsl.yml -p vectr up -d
+
+8.	Add VECTR CA Certificate to Firefox accepted certificates
+# Open Firefox, open preferences, open Privacy & Security menu, scroll to bottom view certificates, import as CA - /opt/vectr/app/config/vectrRootCA.pem and check “Trust this CA to identify websites.”
+
+9.	Copy attached apt33EmulationFromSTIX.json file to ~/CourseFiles for student use in Exercise 8
+
+10.	Browse to https://vectr.local:8081 and login with admin/11_ThisIsTheFirstPassword_11
+
+11.	In VECTR, Click through the migration screens to update databases, add a SANS Organization, and select any database.  Then click the person icon in the top right, and click profile and change the user password to ‘sec564’
+

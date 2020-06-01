@@ -1,0 +1,52 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - hashcat_version is regex("\d\.\d+\.\d+")
+
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: 
+    - p7zip-full 
+    - ocl-icd-libopencl1
+    - opencl-headers
+    - clinfo
+
+- name: Unzip OpenCL
+  unarchive:
+    src: opencl_runtime_16.1.2_x64_rh_6.4.0.37.tgz
+    dest: /tmp/
+
+- name: Create OpenCL install file
+  blockinfile:
+    path: /tmp/opencl_runtime_16.1.2_x64_rh_6.4.0.37/intel_opencl_silent_install.txt
+    create: yes
+    block: |
+      ACCEPT_EULA=accept
+      INSTALL_MODE=NONRPM
+      CONTINUE_WITH_OPTIONAL_ERROR=yes
+      PSET_INSTALL_DIR=/opt
+      PSET_MODE=install
+      PHONEHOME_SEND_USAGE_DATA=no
+      SIGNING_ENABLED=yes
+      COMPONENTS=;opencl-1.2-base__x86_64;opencl-1.2-intel-cpu__x86_64;opencl-1.2-base-pset
+      
+- name: Run OpenCL installer
+  shell: "./install.sh -s intel_opencl_silent_install.txt"
+  args:
+    chdir: /tmp/opencl_runtime_16.1.2_x64_rh_6.4.0.37/
+    creates: /opt/intel/opencl-1.2-6.4.0.37/
+  ignore_errors: yes
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: hashcat

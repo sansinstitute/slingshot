@@ -1,0 +1,19 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Copy wordlists
+  copy:
+    src: "{{ wordlists_item }}"
+    dest: "/tmp/{{ wordlists_item }}"
+  loop: "{{ wordlists_sources }}"
+  loop_control:
+    loop_var: wordlists_item
+
+- name: Unarchive wordlists
+  unarchive:
+    src: "/tmp/{{ wordlists_item }}"
+    dest: "{{ wordlists_install_path }}"
+  loop: "{{ wordlists_sources }}"
+  loop_control:
+    loop_var: wordlists_item

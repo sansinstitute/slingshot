@@ -1,0 +1,24 @@
+---
+- name: Download bettercap
+  get_url:
+    url: "https://github.com/bettercap/bettercap/releases/download/v{{ bettercap_version }}/bettercap_linux_amd64_v{{ bettercap_version }}.zip"
+    dest: "/tmp/"
+    
+- name: Create bettercap install directory
+  file:
+    path: "{{ bettercap_install_path }}/"
+    state: directory
+
+- name: Unzip bettercap
+  unarchive:
+    src: "/tmp/bettercap_linux_amd64_v{{ bettercap_version }}.zip"
+    dest: "{{ bettercap_install_path }}/"
+
+- name: Create symlink
+  file:
+    src: "{{ bettercap_install_path }}/bettercap"
+    dest: "{{ symlink_path }}/bettercap"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,34 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: build-essential
+
+- name: Download and unarchive nmap
+  unarchive:
+    src: "https://nmap.org/dist/nmap-{{ nmap_version }}.tgz"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Move nmap files into target install path
+  shell: "mv /tmp/nmap-{{ nmap_version }}/ {{ nmap_install_path }}/"
+  args:
+    warn: no
+
+- name: Run configure script
+  command: ./configure
+  args:
+    chdir: "{{ nmap_install_path }}/"
+
+- name: Make nmap
+  make:
+    chdir: "{{ nmap_install_path }}/"
+
+- name: Create symlink
+  file:
+    src: "{{ nmap_install_path }}/nmap"
+    dest: "{{ symlink_path }}/nmap"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

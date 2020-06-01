@@ -1,0 +1,4 @@
+---
+neo4j_install_path: /opt/neo4j
+neo4j_file: neo4j-community-4.0.2-unix.tgz
+neo4j_version: neo4j-community-4.0.2

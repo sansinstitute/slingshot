@@ -1,0 +1,25 @@
+---
+- name: Extract Neo4j
+  unarchive:
+    src: "{{ neo4j_file }}"
+    dest: "/tmp/"
+
+- name: Move Neo4j files into target install path
+  shell: "rm -rf {{ neo4j_install_path }}/; mv /tmp/{{ neo4j_version}}/ {{ neo4j_install_path }}/"
+  args:
+    warn: no
+    
+- name: Set neo4j.conf location
+  set_fact:
+     neo4j_conf_path: "{{ neo4j_install_path}}/conf/neo4j.conf"
+     
+- name: Add neo4j to PATH
+  lineinfile:
+    path: "{{ user_home }}/.bashrc"
+    regexp: "^export PATH=$PATH:{{ neo4j_install_path }}/bin"
+    line: "export PATH=$PATH:{{ neo4j_install_path }}/bin"
+    
+- name: Change neo4j password
+  shell: "{{ neo4j_install_path }}/bin/neo4j-admin set-initial-password '{{ user_name }}'"
+
+- import_tasks: "tasks/mark_installed.yml"

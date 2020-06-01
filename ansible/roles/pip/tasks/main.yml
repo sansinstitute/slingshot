@@ -1,0 +1,17 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: python
+
+- import_tasks: "tasks/check_installed.yml"
+
+- block:
+  - name: Install pip using python module
+    command: "python -m pip install -U pip"
+
+  - import_tasks: "tasks/mark_installed.yml"
+  when: not installed

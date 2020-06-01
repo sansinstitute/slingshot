@@ -1,0 +1,11 @@
+---
+- name: Copy Nessus .deb package to /tmp
+  copy:
+    src: Nessus-8.6.0-ubuntu1110_amd64.deb
+    dest: /tmp/nessus.deb
+
+- name: Install Nessus .deb package
+  apt:
+    deb: /tmp/nessus.deb
+
+- import_tasks: "tasks/mark_installed.yml"

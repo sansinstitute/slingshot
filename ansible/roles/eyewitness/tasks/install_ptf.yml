@@ -1,0 +1,8 @@
+---
+- import_role:
+    name: install-modules
+  vars:
+    ptf_modules:
+    - intelligence-gathering/eyewitness
+
+- import_tasks: "tasks/mark_installed.yml"

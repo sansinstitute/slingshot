@@ -1,0 +1,4 @@
+---
+ptf_install_path: /opt/ptf
+ptf_default_module_path: /opt
+ptf_version: "2.3.3" # This must correspond to a tag in https://github.com/trustedsec/ptf

@@ -1,0 +1,3 @@
+---
+john_install_path: /opt/john
+john_version: "1.9.0-Jumbo-1" # This must correspond to a branch or tag from https://github.com/magnumripper/JohnTheRipper

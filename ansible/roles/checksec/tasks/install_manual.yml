@@ -1,0 +1,14 @@
+---
+- name: Download checksec via Git
+  git:
+    repo: https://github.com/slimm609/checksec.sh.git
+    dest: "{{ checksec_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ checksec_install_path }}/checksec"
+    dest: "{{ symlink_path }}/checksec"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

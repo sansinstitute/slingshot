@@ -1,0 +1,26 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - bettercap_version is regex("\d\.\d+\.\d+")
+    
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: 
+    - libnetfilter-queue1
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+  
+- name: Install HTTP GUI module
+  shell: "{{ bettercap_install_path }}/bettercap -eval 'caplets.update; ui.update; q'"
+
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: bettercap

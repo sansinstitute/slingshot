@@ -1,0 +1,25 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: python
+
+- name: Checkout latest EyeWitness code
+  git:
+    repo: "{{ eyewitness_url }}"
+    dest: "{{ eyewitness_install_path }}"
+    version: "{{ eyewitness_version }}"
+
+- name: Build eyewitness
+  shell: "{{ eyewitness_install_path }}/setup/setup.sh"
+  args:
+    warn: no
+
+- name: Create symlink
+  file:
+    src: "{{ eyewitness_install_path }}/EyeWitness.py"
+    dest: "{{ symlink_path }}/eyewitness"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

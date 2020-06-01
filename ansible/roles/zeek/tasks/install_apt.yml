@@ -1,0 +1,29 @@
+---
+- name: Add Zeek apt signing key
+  apt_key:
+    url: https://download.opensuse.org/repositories/security:zeek/xUbuntu_18.04/Release.key
+    state: present
+
+- name: Add Zeek repository
+  apt_repository:
+    repo: "deb http://download.opensuse.org/repositories/security:/zeek/xUbuntu_18.04/ /"
+    state: present
+
+- name: Install Zeek
+  apt:
+    update_cache: yes
+    name: zeek
+    
+- name: Adding user to zeek group 
+  user:
+    name: "{{ user_name }}"
+    groups: zeek
+    append: yes
+    
+- name: Add zeek to $PATH
+  copy:
+    dest: /etc/profile.d/zeek.sh
+    content: 'PATH=$PATH:/opt/zeek/bin'
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

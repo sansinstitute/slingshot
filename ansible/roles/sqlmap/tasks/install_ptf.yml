@@ -1,0 +1,15 @@
+---
+- import_role:
+    name: install-modules
+  vars:
+    ptf_modules:
+    - exploitation/sqlmap
+
+- name: Create symlink
+  file:
+    src: "{{ ptf_default_module_path }}/sqlmap/sqlmap.py"
+    dest: "{{ symlink_path }}/sqlmap"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

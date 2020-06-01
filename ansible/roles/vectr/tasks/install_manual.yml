@@ -1,0 +1,68 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - python
+    - python-pip
+    - zip
+    - unzip
+
+- name: Install pexpect
+  pip:
+    name: pexpect
+
+- git:
+    repo: https://github.com/SecurityRiskAdvisors/VECTR.git
+    dest: /tmp/vectr
+    force: yes
+
+- name: Mark VECTR scripts executable
+  file:
+    path: "{{ item }}"
+    mode: a+x
+  with_fileglob: /tmp/vectr/*.sh
+
+- name: Replace instances of 'cat /dev/urandom'
+  replace:
+    path: "{{ vectr_item }}"
+    regexp: 'cat /dev/urandom'
+    replace: 'head -c1000 /dev/urandom'
+  with_fileglob: /tmp/vectr/*.sh
+  loop_control:
+    loop_var: vectr_item
+
+- name: Install VECTR
+  expect:
+    chdir: /tmp/vectr
+    command: ./vectr-install.sh
+    responses:
+      Do you wish to continue with a clean new install: "Y"
+      Enter a name for this vectr configuration: "vectr"
+      Enter the VECTR OS user: "{{ user_name }}"
+      Enter the VECTR deploy directory: "{{ vectr_install_path }}"
+      Enter the VECTR data directory: ""
+      VECTR hostname \[.*\]: "{{ vectr_hostname }}"
+      VECTR port \[.*\]: "{{ vectr_port }}"
+      VECTR SSL certificate existing crt file: ""
+      VECTR SSL certificate existing key file: ""
+      Enter advanced configuration options: "N"
+      Do you wish to continue with the install: "Y"
+    echo: yes
+    timeout: null
+
+- name: Turn on experimental VECTR data import feature
+  copy:
+    dest: "{{ vectr_install_path }}/app/static/features.json"
+    content: |
+      [{ "key": "dataImport", "active": true, "name": "Data Import", "description": "Ability to import VECTR data (controls nav item)" }]
+
+- name: Recursively change ownership of VECTR path to root
+  file:
+    path: "{{ vectr_install_path }}"
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+
+- import_tasks: "tasks/mark_installed.yml"

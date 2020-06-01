@@ -1,0 +1,20 @@
+---
+- name: Download and unarchive zap
+  unarchive:
+    src: "{{ zap_url }}"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Move zap files into target install path
+  shell: "mv /tmp/ZAP_{{ zap_version }}/ {{ zap_install_path }}/"
+  args:
+    warn: no
+    
+- name: Create symlink
+  file:
+    src: "{{ zap_install_path }}/zap.sh"
+    dest: "{{ symlink_path }}/zap"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,50 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- import_tasks: "tasks/check_installed.yml"
+
+- block:
+  - name: Install apt package prerequisites
+    apt:
+      update_cache: yes
+      name:
+      - build-essential
+      - curl
+      - gcc
+      - libffi-dev
+      - libssl-dev
+      - make
+      - python
+      - python-dev
+      - python-pip
+      - python-setuptools
+
+  - name: Install pexpect pip module
+    pip:
+      name: pexpect
+
+  - name: Upgrade pyOpenSSL
+    shell: python -m easy_install pyOpenSSL
+
+  - name: Checkout latest PtF code
+    git:
+      repo: https://github.com/trustedsec/ptf.git
+      version: "{{ ptf_version}}"
+      dest: "{{ ptf_install_path }}"
+      update: no
+
+  - name: Configure PtF install location
+    lineinfile:
+      path: "{{ ptf_install_path }}/config/ptf.config"
+      regexp: "BASE_INSTALL_PATH="
+      line: "BASE_INSTALL_PATH=\"{{ ptf_default_module_path }}\""
+
+  - name: Configure PtF organization
+    lineinfile:
+      path: "{{ ptf_install_path }}/config/ptf.config"
+      regexp: "USE_DIRECTORY_ORGANIZATION="
+      line: "USE_DIRECTORY_ORGANIZATION=\"False\""
+
+  - import_tasks: "tasks/mark_installed.yml"
+  when: not installed

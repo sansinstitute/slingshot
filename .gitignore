@@ -1,0 +1,7 @@
+.vagrant/
+.DS_Store
+*.retry
+/*.tar.gz
+/*.zip
+*.box
+*.pyc

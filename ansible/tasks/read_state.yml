@@ -1,0 +1,20 @@
+---
+- set_fact:
+    software: {}
+    state_path: /var/state
+
+- name: Create directory for tracking task state
+  file:
+    path: "{{ state_path }}"
+    mode: 0777
+    recurse: yes
+
+- name: "Read state from {{ state_path }}"
+  find:
+    path: "{{ state_path }}"
+  register: state_files
+
+- name: Construct software dictionary
+  set_fact:
+    software: "{{ software | combine({ item.path | basename: True })}}"
+  loop: "{{ state_files.files }}"

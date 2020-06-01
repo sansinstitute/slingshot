@@ -1,0 +1,35 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: unzip
+
+- name: Create a directory within /tmp
+  file:
+    path: "/tmp/CyberChef_v{{ cyberchef_version }}"
+    state: directory
+    mode: 0755
+    
+- name: Create install directory
+  file:
+    path: "{{ cyberchef_install_path }}"
+    state: directory
+    mode: 0755
+
+- name: Download and unarchive CyberChef
+  unarchive:
+    src: "https://github.com/gchq/CyberChef/releases/download/v{{ cyberchef_version }}/CyberChef_v{{ cyberchef_version }}.zip"
+    dest: "/tmp/CyberChef_v{{ cyberchef_version }}/"
+    remote_src: yes
+
+- name: Copy CyberChef to install location
+  copy:
+    src: "/tmp/CyberChef_v{{ cyberchef_version }}/"
+    dest: "{{ cyberchef_install_path }}/"
+
+- name: Create cyberchef index.html
+  copy:
+    src: "{{ cyberchef_install_path }}/CyberChef_v{{ cyberchef_version }}.html"
+    dest: "{{ cyberchef_install_path }}/index.html"
+
+- import_tasks: "tasks/mark_installed.yml"

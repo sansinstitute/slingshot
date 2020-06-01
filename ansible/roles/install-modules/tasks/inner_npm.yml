@@ -1,0 +1,18 @@
+---
+- name: Install npm module
+  block:
+  - name: "Install npm module: {{ module }}"
+    npm:
+      name: "{{ module }}"
+      global: yes
+
+  - name: Mark installation complete
+    set_fact:
+      software: "{{ software | combine({ module+'_installed': true }) }}"
+      
+  - name: "Write state to {{ state_path }}"
+    copy:
+      content: ""
+      dest: "{{ state_path }}/{{ module }}_installed"
+      mode: '0644'
+  when: not (software[module+'_installed'] | default(false))

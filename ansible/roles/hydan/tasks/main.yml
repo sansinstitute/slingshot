@@ -1,0 +1,11 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: libssl1.0-dev
+
+#- name: Download and unarchive hydan 0.13
+#  unarchive:
+#    src: http://www.crazyboy.com/hydan/hydan-0.13.tar.gz
+#    dest: /opt
+#    remote_src: yes

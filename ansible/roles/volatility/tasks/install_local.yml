@@ -1,0 +1,39 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - unzip
+    
+- name: Set Volatility basename
+  set_fact:
+    volatility_basename: "{{ volatility_file | basename }}"
+    
+- name: Set Volatility rootname
+  set_fact:
+    volatility_rootname: "{{ (volatility_basename | splitext)[0] }}"
+
+- name: Extract Volatility
+  unarchive:
+    src: "{{ volatility_file }}"
+    dest: "/tmp/"
+
+- name: Move Volatility files into target install path
+  shell: "rm -rf {{ volatility_install_path }}/; mv /tmp/{{ volatility_rootname}}/ {{ volatility_install_path }}/"
+  args:
+    warn: no
+    
+- name: Fix permissions for Volatility
+  file:
+    path: "{{ volatility_install_path }}"
+    mode: 0755
+    recurse: yes
+        
+- name: Create symlink
+  file:
+    src: "{{ volatility_install_path }}/volatility_2.6_lin64_standalone"
+    dest: "{{ symlink_path }}/volatility"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,11 @@
+---
+- name: Test for command
+  shell: ". /etc/profile && command -v {{ command }} >/dev/null 2>&1"
+  register: is_installed
+  ignore_errors: yes
+
+- name: Test assertions
+  assert:
+    that:
+      - is_installed.rc == 0
+    fail_msg: "{{ command }} did not install correctly."

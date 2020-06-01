@@ -1,0 +1,110 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+  ########################################################################################
+  - name: MAIN BLOCK
+    block:
+
+    ######################################################################################
+    - name: READ STATE FILES
+      block:
+      - include_tasks: "tasks/read_state.yml"
+
+    ######################################################################################
+    - name: BASIC CONFIGURATION
+      block:
+      - include_role:
+          name: slingshot
+
+    ######################################################################################
+    - name: INSTALL PACKAGES, MODULES, AND ROLES
+      block:
+      - include_role:
+          name: docker
+        vars:
+          docker_users:
+          - "{{ user_name }}"
+
+      - include_role:
+          name: "{{ item }}"
+        loop:
+        - asleap
+        - beef
+        - bettercap
+        - checksec
+        - chrome
+        - covenant
+        - cowpatty
+        - empire3
+        - eql
+        - exploitdb
+#        - eyewitness
+        - flamingo
+        - hashcat
+        - john
+        - koadic
+        - logontracer
+        - metasm
+        - metasploit
+        - mimikittenz
+        - nikto
+        - nmap
+        - padbuster
+        - powershell
+        - ptf
+        - reconng
+        - responder
+        - sherlock
+        - snmpcheck
+        - sqlmap
+        - upx
+        - veil
+        - weirdaal
+        - zap
+
+      - include_role:
+          name: rita
+        vars:
+          override:
+            rita_install_bro: no
+            
+      - include_role:
+          name: wordlists
+        vars:
+          override:
+            wordlists_sources:
+            - rockyou.txt.zip
+
+      - include_role:
+          name: install-modules
+        vars:
+          ptf_modules:
+          - exploitation/burp
+          - exploitation/ettercap
+          - exploitation/setoolkit
+          - intelligence-gathering/masscan
+          - intelligence-gathering/unicornscan
+          - vulnerability-analysis/hydra
+          - vulnerability-analysis/openvas
+          - vulnerability-analysis/wpscan
+          - wireless/aircrackng
+          - wireless/kismet
+
+# TODO:
+# IronWasp
+# SqlNinja
+# Maltego
+# peda https://github.com/longld/peda
+# Faction C2
+# Shellter
+
+    ######################################################################################
+    - name: INSTALL DESKTOP
+      block:
+      - include_role:
+          name: mate 
+          
+      - include_role:
+          name: slingshot-default-packages

@@ -1,0 +1,22 @@
+---
+- name: Set MongoDB facts
+  set_fact:
+    mongodb_major_version: "{{ mongodb_version[0:3] }}"
+
+#- name: Add MongoDB GPG key
+#  apt_key:
+#    keyserver: hkp://keyserver.ubuntu.com:80
+#    id: 9DA31620334BD75D9DCB49F368818C72E52529D4
+
+- name: Add MongoDB repository
+  apt_repository:
+    repo: "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/{{ mongodb_major_version }} multiverse"
+    state: present
+
+- name: "Install MongoDB {{ mongodb_version }}"
+  apt:
+    update_cache: yes
+    name: "mongodb-org={{ mongodb_version }}"
+    allow_unauthenticated: yes
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,27 @@
+---
+- name: Install Docker
+  include_role:
+    name: docker
+
+- name: Pull LogonTracer image
+  shell: "docker pull jpcertcc/docker-logontracer"
+
+- name: Create launcher script
+  blockinfile:
+    path: "{{ logontracer_install_path }}/logontracer.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+      docker run --detach --publish=7474:7474 --publish=7687:7687 \
+        --publish={{ logontracer_port }}:{{ logontracer_port }} \
+        -e LTHOSTNAME={{ logontracer_host }} jpcertcc/docker-logontracer
+
+- name: Create symlink
+  file:
+    src: "{{ logontracer_install_path }}/logontracer.sh"
+    dest: "{{ symlink_path }}/logontracer"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

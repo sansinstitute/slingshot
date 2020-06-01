@@ -1,0 +1,15 @@
+---
+- name: Install npm
+  apt:
+    update_cache: yes
+    name:
+    - libssl1.0-dev
+    - nodejs-dev
+    - node-gyp
+    - npm
+
+- name: Install npm modules
+  include_tasks: inner_npm.yml
+  loop: "{{ npm_modules }}"
+  loop_control:
+    loop_var: module

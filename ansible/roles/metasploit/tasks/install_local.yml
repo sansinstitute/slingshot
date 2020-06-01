@@ -1,0 +1,16 @@
+---
+- name: Copy Metasploit .deb
+  copy:
+    src: "{{ metasploit_file }}"
+    dest: /tmp/
+
+- name: Install Metasploit
+  shell: "dpkg -i /tmp/{{ metasploit_file }}"
+  ignore_errors: yes
+
+- name: Install Metasploit dependencies
+  command: "apt-get install -f -y"
+  args:
+    warn: no
+
+- import_tasks: "tasks/mark_installed.yml"

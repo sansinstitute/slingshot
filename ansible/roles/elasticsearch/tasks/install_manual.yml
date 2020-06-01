@@ -1,0 +1,11 @@
+---
+- name: Download Elastic
+  get_url:
+    url: "{{ elastic_url }}"
+    dest: "/tmp/elastic.deb"
+
+- name: Install Elastic
+  shell: "dpkg -i /tmp/elastic.deb"
+  ignore_errors: yes
+
+- import_tasks: "tasks/mark_installed.yml"

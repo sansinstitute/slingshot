@@ -1,0 +1,4 @@
+---
+empire_install_path: /opt/empire
+empire_url: https://github.com/EmpireProject/Empire.git
+empire_version: "HEAD" # This must correspond to a tag in https://github.com/EmpireProject/Empire/

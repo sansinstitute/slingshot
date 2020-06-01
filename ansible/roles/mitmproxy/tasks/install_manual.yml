@@ -1,0 +1,7 @@
+---
+- name: Download mitmproxy via Git
+  git:
+    repo: https://github.com/mitmproxy/mitmproxy.git
+    dest: "{{ mitmproxy_install_path }}"
+
+- import_tasks: "tasks/mark_installed.yml"

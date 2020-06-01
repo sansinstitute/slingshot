@@ -1,0 +1,6 @@
+---
+- include_tasks: "install_ptf.yml"
+  when: ptf_modules is defined
+  
+- include_tasks: "install_npm.yml"
+  when: npm_modules is defined

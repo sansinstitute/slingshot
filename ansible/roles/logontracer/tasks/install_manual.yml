@@ -1,0 +1,47 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - python3
+    - python3-pip
+    
+- name: Install virtualenv
+  pip:
+    name: virtualenv
+    executable: pip3
+
+- name: Install neo4j
+  include_role:
+    name: neo4j
+
+- name: Enable Bolt on 0.0.0.0
+  replace:
+    path: "{{ neo4j_conf_path }}"
+    regexp: "^#dbms.connector.bolt.listen_address=:7687$"
+    replace: "dbms.connector.bolt.listen_address=0.0.0.0:7687"
+    
+- name: Enable HTTP listener on 0.0.0.0
+  replace:
+    path: "{{ neo4j_conf_path }}"
+    regexp: "^#dbms.connector.http.listen_address=:7474$"
+    replace: "dbms.connector.http.listen_address=0.0.0.0:7474"
+    
+- name: Checkout latest LogonTracer code
+  git:
+    repo: "https://github.com/joswr1ght/LogonTracer.git"
+    dest: "{{ logontracer_install_path }}"
+    
+- name: Install pip requirements
+  pip:
+    requirements: "{{ logontracer_install_path }}/requirements.txt"
+    executable: pip3
+#
+#- name: Create symlink
+#  file:
+#    src: "{{ logontracer_install_path }}/logontracer.sh"
+#    dest: "{{ symlink_path }}/logontracer"
+#    state: link
+#  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

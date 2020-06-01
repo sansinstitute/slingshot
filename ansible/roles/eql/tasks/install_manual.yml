@@ -1,0 +1,17 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - git
+    - python
+    - python-pip
+
+- name: Install pip
+  command: python -m pip install -U pip
+
+- name: Install eql via pip
+  pip:
+    name: eql
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,11 @@
+---
+- name: Download Kibana
+  get_url:
+    url: "{{ kibana_url }}"
+    dest: "/tmp/kibana.deb"
+
+- name: Install Kibana
+  shell: "dpkg -i /tmp/kibana.deb"
+  ignore_errors: yes
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,18 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "docker")
+    
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_docker.yml"
+  when: (method is not defined or method == 'docker') and not installed

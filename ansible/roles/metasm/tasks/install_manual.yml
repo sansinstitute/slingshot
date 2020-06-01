@@ -1,0 +1,51 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - curl
+    - git
+    - gnupg
+    - python
+    - python-pip
+
+- block:
+  - name: Install RVM GPG keys
+    shell: gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+  
+  - name: Install RVM without dependencies
+    shell: curl -sSL https://get.rvm.io | bash -s -- --autolibs=install-packages
+    args:
+      warn: no
+  become: yes
+  become_user: "{{ user_name }}"
+  
+- name: Install RVM dependencies
+  shell: .rvm/bin/rvm requirements 
+  args:
+    chdir: "{{ user_home }}"
+
+- block:
+  - name: Install RVM with dependencies
+    shell: curl -sSL https://get.rvm.io | bash -s stable --ruby
+    args:
+      warn: no
+      
+  - name: Install Ruby
+    shell: source ~/.profile && rvm install ruby-2.5.3
+    args:
+      executable: /bin/bash
+  become: yes
+  become_user: "{{ user_name }}"
+  
+- name: Download metasm via Git
+  git:
+    repo: https://github.com/jjyg/metasm.git
+    dest: "{{ metasm_install_path }}"
+    
+- name: Add metasm to $RUBYLIB
+  copy:
+    dest: /etc/profile.d/ruby-metasm.sh
+    content: 'export RUBYLIB=$RUBYLIB:{{ metasm_install_path }}'
+
+- import_tasks: "tasks/mark_installed.yml"

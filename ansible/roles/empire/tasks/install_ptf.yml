@@ -1,0 +1,8 @@
+---
+- import_role:
+    name: install-modules
+  vars:
+    ptf_modules:
+    - post-exploitation/empire
+
+- import_tasks: "tasks/mark_installed.yml"

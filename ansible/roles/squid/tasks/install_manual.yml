@@ -1,0 +1,59 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name: 
+    - build-essential
+    - openssl
+    - libssl-dev
+    - pkg-config
+    - autoconf
+
+- name: Download squid
+  get_url:
+    url: http://www.squid-cache.org/Versions/v4/squid-4.5.tar.gz
+    dest: /tmp/squid-4.5.tar.gz
+
+- name: Unzip squid
+  unarchive:
+    src: /tmp/squid-4.5.tar.gz
+    dest: /tmp
+    
+- name: Run squid configure
+  shell: |
+    ./configure --with-openssl --enable-ssl-crtd
+  args:
+    chdir: /tmp/squid-4.5
+    
+- name: Make squid
+  make:
+    chdir: /tmp/squid-4.5
+    
+- name: Install squid
+  make:
+    target: install
+    chdir: /tmp/squid-4.5
+    
+- name: Create squid certs
+  shell: |
+    mkdir ssl_cert
+    chown nobody:nobody
+    chmod 700 ssl_cert
+  args:
+    chdir: /usr/local/squid
+      
+- name: Copy squid cert
+  copy:
+    src: squid-ca.pem
+    dest: /usr/local/squid/ssl_cert/squid-ca.pemd
+    
+- name: Create squid cache directories
+  shell: |
+    mkdir -p ./var/lib/ssl_db
+    ./libexec/ssl_crtd -c -s /usr/local/var/lib/ssl_db
+    chown nobody:nobody -R ./var/lib/ssl_db
+    chmod 777 ./var/logs
+  args:
+    chdir: /usr/local/squid
+
+- import_tasks: "tasks/mark_installed.yml"

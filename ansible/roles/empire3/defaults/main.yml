@@ -1,0 +1,7 @@
+---
+empire_install_path: /opt/empire3
+empire_url: https://github.com/BC-SECURITY/Empire.git
+empire_version: "4a14649aadedf2ace64840ae4edf8d96d2b91e6c" # This must correspond to a tag in https://github.com/BC-SECURITY/Empire
+empire_starkiller_install: yes
+empire_starkiller_url: https://github.com/BC-SECURITY/Starkiller/releases/download/v1.0.0/starkiller-1.0.0.AppImage
+empire_starkiller_install_path: /opt/starkiller

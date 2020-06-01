@@ -1,0 +1,40 @@
+---
+- name: Install Docker
+  include_role:
+    name: docker
+  vars:
+    method: manual
+    
+- name: Checkout latest ApFell code
+  git:
+    repo: "https://github.com/its-a-feature/Apfell"
+    dest: "{{ apfell_install_path }}"
+
+- name: Set up ApFell
+  shell: "./setup_apfell.sh"
+  args:
+    chdir: "{{ apfell_install_path }}"
+    
+- name: Create launcher script
+  blockinfile:
+    path: "{{ apfell_install_path }}/apfell-bootstrap.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+      if [ $(/usr/bin/id -u) -ne 0 ]; then
+          echo "Please run ApFell as root."
+          exit
+      fi
+
+      cd {{ apfell_install_path }}
+      ./start_apfell.sh
+
+- name: Create symlink
+  file:
+    src: "{{ apfell_install_path }}/apfell-bootstrap.sh"
+    dest: "{{ symlink_path }}/apfell"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

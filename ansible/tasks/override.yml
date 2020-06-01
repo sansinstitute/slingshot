@@ -1,0 +1,15 @@
+---
+- name: Verify that overrides are valid
+  assert:
+    that: "{{ override_item.key }} is defined"
+    fail_msg: "Attempted to override an unknown variable: {{ override_item.key }}"
+    quiet: yes
+  loop: "{{ q('dict', override) }}"
+  loop_control:
+    loop_var: override_item
+
+- name: Set variables based on overrides
+  set_fact: { "{{ override_item.key }}":"{{ override_item.value }}" }
+  loop: "{{ q('dict', override) }}"
+  loop_control:
+    loop_var: override_item

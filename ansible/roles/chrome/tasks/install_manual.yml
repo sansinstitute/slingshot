@@ -1,0 +1,16 @@
+---
+- name: Download Chrome
+  get_url:
+    url: "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    dest: "/tmp/"
+
+- name: Install Chrome
+  shell: "dpkg -i /tmp/google-chrome-stable_current_amd64.deb"
+  ignore_errors: yes
+
+- name: Install Chrome dependencies
+  command: "apt-get install -f -y"
+  args:
+    warn: no
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,21 @@
+---
+- name: Download metasploit installer
+  get_url:
+    url: "{{ metasploit_url }}"
+    dest: "/tmp/msfinstall"
+    mode: '0755'
+
+- name: Run metasploit installer
+  command: "/tmp/msfinstall --mode unattended --unattendedmodeui minimal --prefix {{ metasploit_install_path }}"
+  args:
+    creates: "{{ metasploit_install_path }}"
+
+- name: Set postgres user as a system account in AccountsService
+  blockinfile:
+    path: /var/lib/AccountsService/users/postgres
+    create: yes
+    block: |
+      [User]
+      SystemAccount=true
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,10 @@
+---
+- name: Install PtF
+  include_role:
+    name: ptf
+
+- name: Install PtF modules
+  include_tasks: inner_ptf.yml
+  loop: "{{ ptf_modules }}"
+  loop_control:
+    loop_var: module

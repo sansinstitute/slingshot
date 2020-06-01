@@ -1,0 +1,34 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "manual")
+    
+- name: Install prerequisite roles
+  include_role:
+    name: "{{ item }}"
+  loop:
+  - elasticsearch
+  - kibana
+  
+- name: Wait for port 9300 (elasticsearch)
+  wait_for:
+    port: 9300
+
+- name: Wait for port 5601 (kibana)
+  wait_for:
+    port: 5601
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
+  
+- name: Start filebeat service
+  service:
+    name: filebeat
+    state: started
+    enabled: yes

@@ -1,0 +1,11 @@
+---
+- name: Download Filebeat
+  get_url:
+    url: "{{ filebeat_url }}"
+    dest: "/tmp/filebeat.deb"
+
+- name: Install Filebeat
+  shell: "dpkg -i /tmp/filebeat.deb"
+  ignore_errors: yes
+
+- import_tasks: "tasks/mark_installed.yml"

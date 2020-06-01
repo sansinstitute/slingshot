@@ -1,0 +1,47 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    update_cache: yes
+    name:
+    - python3.7
+    - python3.7-dev
+    - python3-pip
+
+- name: Install virtualenv
+  pip:
+    name: virtualenv
+
+- name: Download SilenTrinity via Git
+  git:
+    repo: "{{ silenttrinity_url }}"
+    version: "{{ silenttrinity_version}}"
+    dest: "{{ silenttrinity_install_path }}"
+
+- name: Install pip requirements
+  pip:
+    requirements: "{{ silenttrinity_install_path }}/requirements.txt"
+    virtualenv: "{{ silenttrinity_install_path }}/venv"
+    virtualenv_python: python3.7
+
+- name: Create launcher script
+  blockinfile:
+    path: "{{ silenttrinity_install_path }}/silenttrinity-bootstrap.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+
+      echo "Starting SilenTrinity..."
+      
+      cd {{ silenttrinity_install_path }}
+      . venv/bin/activate
+      python3 st.py "$@"
+
+- name: Create symlink
+  file:
+    src: "{{ silenttrinity_install_path }}/silenttrinity-bootstrap.sh"
+    dest: "{{ symlink_path }}/silenttrinity"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

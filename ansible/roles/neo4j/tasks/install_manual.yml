@@ -1,0 +1,22 @@
+---
+- name: Move asleap files into target install path
+  shell: |
+    wget --no-check-certificate -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
+    echo 'deb http://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
+  args:
+    warn: no
+    
+- name: Install neo4j
+  apt:
+    update_cache: yes
+    name:
+    - neo4j
+    
+- name: Set neo4j.conf location
+  set_fact:
+     neo4j_conf_path: "/etc/neo4j/neo4j.conf"
+     
+- name: Change neo4j password
+  shell: "neo4j-admin set-initial-password '{{ user_name }}'"
+
+- import_tasks: "tasks/mark_installed.yml"

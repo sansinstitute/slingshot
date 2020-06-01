@@ -1,0 +1,133 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+  
+- name: Set playbook-wide facts
+  set_fact:
+    user_name: "{{ user_name }}"
+    user_home: "/home/{{ user_name }}"
+    create_symlinks: "{{ create_symlinks }}"
+    symlink_path: "{{ symlink_path }}"
+
+- name: Create symlink directory
+  file:
+    path: "{{ symlink_path }}"
+    mode: 0755
+    recurse: yes
+  when: create_symlinks is defined and create_symlinks
+
+- name: Add symlink_path to $PATH
+  copy:
+    dest: /etc/profile.d/custom-path.sh
+    content: 'export PATH=$PATH:{{ symlink_path }}'
+  when: create_symlinks is defined and create_symlinks
+
+- name: Set root password
+  user:
+    name: root
+    password: "*"
+    state: present
+
+- name: "Create user {{ user_name }}"
+  user:
+    name: "{{ user_name }}"
+    password: "{{ user_password }}"
+    home: "{{ user_home }}"
+    groups:
+    - sudo
+    - netdev
+    append: yes
+    shell: /bin/bash
+    state: present
+
+- name: Extract lab files to /home/
+  unarchive:
+    src: "/tmp/labs.tar.gz"
+    dest: "{{ user_home }}"
+    keep_newer: yes
+
+- name: Alias more to 'less -FX' for user
+  lineinfile:
+    path: "/home/{{ user_name }}/.bash_aliases"
+    create: yes
+    mode: 0644
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    regexp: "^alias more="
+    line: "alias more='less -FX'"
+
+- name: Alias more to 'less -FX' for root
+  lineinfile:
+    path: /root/.bash_aliases
+    create: yes
+    regexp: "^alias more="
+    line: "alias more='less -FX'"
+
+#- name: Copy test playbook to /root/
+#  copy:
+#    src: /tmp/test.yml
+#    dest: /root/
+
+- name: Enable localhost for ansible
+  lineinfile:
+    path: /etc/ansible/hosts
+    regexp: "^localhost"
+    line: localhost ansible_connection=local
+
+- name: Change ownership of user lab files
+  file:
+    path: "{{ user_home }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    follow: no
+    
+- name: Install linux-virtual package
+  apt:
+    name: linux-virtual
+    
+#- name: Remove linux-generic package
+#  apt:
+#    name: linux-generic
+#    autoremove: yes
+#    purge: yes
+    
+- name: Remove linux-firmware package
+  apt:
+    name: linux-firmware
+    state: absent
+    purge: yes
+    
+- name: Run update-grub
+  shell: "update-grub"
+
+- name: Update sudo to address USN-4154-1
+  apt:
+    update_cache: yes
+    name:
+    - sudo
+    state: latest
+    
+- name: Copy post-root.sh script
+  copy:
+    src: post-root.sh
+    dest: "{{ user_home }}/post-root.sh"
+    mode: 0744
+    owner: root
+    group: root
+    
+- name: Copy post-user.sh script
+  copy:
+    src: post-user.sh
+    dest: "{{ user_home }}/post-user.sh"
+    mode: 0744
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+      
+- name: Copy compact.sh script
+  copy:
+    src: compact.sh
+    dest: "{{ user_home }}/compact.sh"
+    mode: 0744
+    owner: root
+    group: root
