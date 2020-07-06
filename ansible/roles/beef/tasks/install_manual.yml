@@ -33,6 +33,7 @@
 - name: Checkout latest BeEF code
   git:
     repo: https://github.com/beefproject/beef.git
+    version: "{{ beef_version}}"
     dest: "{{ beef_install_path }}"
     
 - name: Create beef group
