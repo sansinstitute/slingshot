@@ -12,10 +12,13 @@
 * 4 GB of system memory
 * 15 GB of disk space
 
+## Building Slingshot
+For instructions on building Slingshot, see [INSTALL.md](INSTALL.md).
+
 ## Slingshot Overview
 ### What is Slingshot?
 
-Slingshot is an Ubuntu-based Linux distribution with the MATE Desktop Environment built for use in the SANS penetration testing curriculum and beyond. Designed to be stable, reliable and lean, Slingshot is built with Vagrant and Ansible. It includes many standard pen testing tools, as well as the PenTesters Framework (PTF). Course-specific builds include all of the tools, files and documentation needed for class labs. The initial release of Slingshot is for the general community with course-specific builds deploying throughout 2020.
+Slingshot is an Ubuntu-based Linux distribution with the MATE Desktop Environment built for use in the SANS penetration testing curriculum and beyond. Designed to be stable, reliable and lean, Slingshot is built with Vagrant and Ansible. The open-source community edition includes many standard pen testing tools, as well as the PenTesters Framework (PTF). Class-specific versions build upon the community edition and include the tools, files, and documentation needed for class labs.
 
 ### Key Features of Slingshot
 
@@ -63,7 +66,7 @@ Slingshot is an Ubuntu-based Linux distribution with the MATE Desktop Environmen
 ...with the ability to quickly install hundreds of others with the PenTesters Framework. Did we miss something? Submit a request through our feedback form above!
 
 ### Contributors
-Slingshot was created by Ryan O'Grady, with contributions from Joshua Wright, Stephen Sims, and Daniel Pendolino.
+Slingshot was created by Ryan O'Grady (@NonVictus), with contributions from Joshua Wright (@joswr1ght), Stephen Sims (@Steph3nSims), Daniel Pendolino (@dpendolino), and Ben Allen (@mr_secure).
 
 ## Feedback
-Have a question, suggestion or tool request? Experiencing any issues with download? Find any bugs or errors? [Send us your feedback](https://survey.sans.org/jfe/form/SV_9toec9YBwzdl1zf)
+Have a bug report or feature request? [Create a new issue](https://github.com/sansinstitute/slingshot/issues)
