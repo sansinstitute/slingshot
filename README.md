@@ -2,7 +2,7 @@
 
 ## Download & Install Slingshot
 
-* [Download Slingshot Virtual Appliance (.ova format)](about:blank)
+* [Download Slingshot Virtual Appliance (.ova format)](https://www.sans.org/slingshot-vmware-linux)
 * Login = **slingshot**
 * Password = **slingshot**
 
