@@ -33,7 +33,7 @@
           name: "{{ item }}"
         loop:
         - asleap
-        # - beef  ## FIXME: wants gcc-9-base which does not exist in apt repos
+        - beef
         - bettercap
         - checksec
         - chrome
