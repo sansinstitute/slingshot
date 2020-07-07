@@ -33,7 +33,7 @@ history -c
 Or, export using `ovftool` ... and tab completion
 
 ```bash
-ovftool --name=slingshot -st=vmx -tt=ova ./.vagrant/machines/slingshot/vmware_fusion/d303fb95-5d10-4ffb-a201-af4d62baa90a/ubuntu-18.04-amd64.vmx /Users/Shared/SROC/slingshot-20200705.ova
+ovftool --name=slingshot -st=vmx -tt=ova ./.vagrant/machines/slingshot/vmware_fusion/d303fb95-5d10-4ffb-a201-af4d62baa90a/ubuntu-18.04-amd64.vmx /Volumes/extra/slingshot-20200705.ova
 ```
 
 OVA is basically just a .tar of the OVF directory.
