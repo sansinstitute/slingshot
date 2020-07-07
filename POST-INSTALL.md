@@ -54,6 +54,8 @@ Or, export using `ovftool`
 vmrun -T fusion stop "${SLINGSHOT_VMX}"
 export SLINGSHOT_OUT_DIR="/path/to/output"
 ovftool --name=slingshot-ce -st=vmx -tt=ova "${SLINGSHOT_VMX}" "${SLINGSHOT_OUT_DIR}"/slingshot-$(date -u +%Y%m%d).ova
+
+vagrant destroy -f slingshot
 ```
 
 OVA is basically just a .tar of the OVF directory.
