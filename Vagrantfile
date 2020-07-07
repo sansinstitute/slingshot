@@ -46,11 +46,6 @@ Vagrant.configure("2") do |config|
         machine.vm.provision "shell",
             inline: "sed -i 's/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"'Slingshot')} #{version}\"/' /etc/lsb-release"
 
-        machine.vm.provision "shell",
-            inline: "sudo apt-get update; sudo apt-get upgrade -y; sudo apt-get autoremove -y"
-
-        machine.vm.provision :reload
-
         machine.vm.provision :file, source: "slingshot.tar.gz", destination: "/tmp/labs.tar.gz"
 
         machine.vm.provision "setup", type: "ansible_local" do |ansible|
