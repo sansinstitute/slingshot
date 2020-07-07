@@ -2,6 +2,10 @@
 - include_tasks: "tasks/override.yml"
   when: override is defined
   
+- name: Update apt cache
+  apt:
+    cache_valid_time: 3600
+  
 - name: Set playbook-wide facts
   set_fact:
     user_name: "{{ user_name }}"
@@ -103,7 +107,6 @@
 
 - name: Update sudo to address USN-4154-1
   apt:
-    update_cache: yes
     name:
     - sudo
     state: latest

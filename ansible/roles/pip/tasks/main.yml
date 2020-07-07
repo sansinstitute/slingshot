@@ -4,7 +4,6 @@
 
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name: python
 
 - import_tasks: "tasks/check_installed.yml"

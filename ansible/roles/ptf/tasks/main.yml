@@ -7,7 +7,6 @@
 - block:
   - name: Install apt package prerequisites
     apt:
-      update_cache: yes
       name:
       - build-essential
       - curl

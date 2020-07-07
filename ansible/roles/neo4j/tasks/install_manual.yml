@@ -8,7 +8,6 @@
     
 - name: Install neo4j
   apt:
-    update_cache: yes
     name:
     - neo4j
     

@@ -11,7 +11,6 @@
 
 - name: Install Zeek
   apt:
-    update_cache: yes
     name: zeek
     
 - name: Adding user to zeek group 

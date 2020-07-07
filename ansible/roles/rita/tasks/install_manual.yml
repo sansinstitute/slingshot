@@ -1,7 +1,6 @@
 ---
 - name: Install python-pexpect
   apt:
-    update_cache: yes
     name: python-pexpect
 
 - name: Download RITA installer

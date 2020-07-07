@@ -1,7 +1,6 @@
 ---
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name: libssl1.0-dev
 
 #- name: Download and unarchive hydan 0.13

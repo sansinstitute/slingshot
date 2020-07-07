@@ -17,6 +17,7 @@
       block:
       - include_role:
           name: slingshot
+          
       - include_role:
           name: slingshot-default-packages
 
