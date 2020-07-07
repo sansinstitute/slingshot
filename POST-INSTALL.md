@@ -14,7 +14,24 @@
 1. ~~Zero unused disk space - optional: `sudo dd if=/dev/zero of=/bigemptyfile ; sudo rm -f /bigemptyfile`~~
 1. Clear bash history for root and main user: `history -c`
 
-After restarting and logging in as `slingshot`, run the following:
+### Command Line Approach - macOS / Fusion
+
+```bash
+vagrant ssh slingshot -c "sudo rm -f /etc/netplan/50-vagrant.yaml"
+vagrant halt slingshot
+
+export SLINGSHOT_VMX=$(find .vagrant/machines/slingshot -type f -name \*vmx | head -1)
+export SLINGSHOT_RM_NIC=$(vmrun -T fusion listNetworkAdapters "${SLINGSHOT_VMX}" | grep bridged | awk '{print $1}')
+vmrun -T fusion deleteNetworkAdapter "${SLINGSHOT_VMX}" "${SLINGSHOT_RM_NIC}"
+vmrun -T fusion start "${SLINGSHOT_VMX}"
+
+export SLINGSHOT_IP=$(vmrun -T fusion getGuestIPAddress "${SLINGSHOT_VMX}" -wait)
+echo ${SLINGSHOT_IP}
+
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null slingshot@${SLINGSHOT_IP}
+```
+
+Now that you're logged in as `slingshot`, run the following:
 
 ```bash
 sudo userdel -r vagrant
@@ -22,6 +39,7 @@ sudo rm -rf /tmp/*
 sudo rm -rf /var/state
 sudo find /var/log -type f -exec cp /dev/null {} \;
 history -c
+exit
 ```
 
 ## Export .ova
@@ -30,10 +48,12 @@ history -c
 2. Within VMWare Workstation / Fusion Pro, choose `File->Export to OVF...`
 3. Choose `Export as OVA (single-file archive)`
 
-Or, export using `ovftool` ... and tab completion
+Or, export using `ovftool`
 
 ```bash
-ovftool --name=slingshot -st=vmx -tt=ova ./.vagrant/machines/slingshot/vmware_fusion/d303fb95-5d10-4ffb-a201-af4d62baa90a/ubuntu-18.04-amd64.vmx /Volumes/extra/slingshot-20200705.ova
+vmrun -T fusion stop "${SLINGSHOT_VMX}"
+export SLINGSHOT_OUT_DIR="/path/to/output"
+ovftool --name=slingshot-ce -st=vmx -tt=ova "${SLINGSHOT_VMX}" "${SLINGSHOT_OUT_DIR}"/slingshot-$(date -u +%Y%m%d).ova
 ```
 
 OVA is basically just a .tar of the OVF directory.
