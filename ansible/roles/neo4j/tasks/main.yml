@@ -9,7 +9,6 @@
     
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name: openjdk-11-jdk
     
 - import_tasks: "tasks/check_installed.yml"

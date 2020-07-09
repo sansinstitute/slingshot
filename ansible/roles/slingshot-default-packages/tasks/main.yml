@@ -1,7 +1,6 @@
 ---
 - name: Add apt packages
   apt:
-    update_cache: yes
     name:
     - cl-base64
     - coreutils

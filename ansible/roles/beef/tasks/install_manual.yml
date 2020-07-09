@@ -1,7 +1,6 @@
 ---
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name:
     - curl
     - git
@@ -33,6 +32,7 @@
 - name: Checkout latest BeEF code
   git:
     repo: https://github.com/beefproject/beef.git
+    version: "{{ beef_version }}"
     dest: "{{ beef_install_path }}"
     
 - name: Create beef group

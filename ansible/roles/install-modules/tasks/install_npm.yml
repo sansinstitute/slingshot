@@ -1,7 +1,6 @@
 ---
 - name: Install npm
   apt:
-    update_cache: yes
     name:
     - libssl1.0-dev
     - nodejs-dev

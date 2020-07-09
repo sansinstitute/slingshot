@@ -9,7 +9,6 @@
 
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name: libpcap-dev
 
 - import_tasks: "tasks/check_installed.yml"

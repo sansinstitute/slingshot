@@ -9,7 +9,6 @@
 
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name: 
     - p7zip-full 
     - ocl-icd-libopencl1

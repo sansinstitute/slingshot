@@ -17,6 +17,9 @@
       block:
       - include_role:
           name: slingshot
+          
+      - include_role:
+          name: slingshot-default-packages
 
     ######################################################################################
     - name: INSTALL PACKAGES, MODULES, AND ROLES
@@ -69,7 +72,7 @@
         vars:
           override:
             rita_install_bro: no
-            
+
       - include_role:
           name: wordlists
         vars:
@@ -104,7 +107,6 @@
     - name: INSTALL DESKTOP
       block:
       - include_role:
-          name: mate 
-          
-      - include_role:
-          name: slingshot-default-packages
+          name: mate
+
+

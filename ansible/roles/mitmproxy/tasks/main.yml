@@ -14,7 +14,6 @@
 
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name: python3.6
 
 - import_tasks: "tasks/check_installed.yml"

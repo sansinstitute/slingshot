@@ -15,7 +15,6 @@
 
 - name: "Install MongoDB {{ mongodb_version }}"
   apt:
-    update_cache: yes
     name: "mongodb-org={{ mongodb_version }}"
     allow_unauthenticated: yes
 

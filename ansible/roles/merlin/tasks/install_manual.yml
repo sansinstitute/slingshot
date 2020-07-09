@@ -1,7 +1,6 @@
 ---
 - name: Install apt package prerequisites
   apt:
-    update_cache: yes
     name:
     - golang
     - p7zip
