@@ -10,12 +10,8 @@ fi
 
 pkill -u vagrant
 
-ifconfig eth1 down
-ifconfig eth0 down
-mv /etc/netplan/50-vagrant.yaml /etc/netplan/01-netcfg.yaml
-sed 's/eth1/eth0/g' -i /etc/netplan/01-netcfg.yaml
+rm /etc/netplan/50-vagrant.yaml
 netplan apply
-ifconfig eth0 up
 
 userdel -r vagrant
 

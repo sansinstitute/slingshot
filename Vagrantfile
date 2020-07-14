@@ -15,8 +15,6 @@ Vagrant.configure("2") do |config|
         machine.vm.box = "bento/ubuntu-18.04"
         machine.vm.hostname = "slingshot"
 
-        machine.vm.network "public_network"
-
         machine.vm.provider "vmware_fusion" do |v|
             v.gui = true
 
