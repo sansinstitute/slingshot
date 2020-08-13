@@ -14,6 +14,11 @@
 
 - import_tasks: "tasks/check_installed.yml"
 
+- include_tasks: "install_local.yml"
+  when: (method is not defined or method == 'local') and not installed
+
+- import_tasks: "tasks/check_installed.yml"
+
 - include_tasks: "install_manual.yml"
   when: (method is not defined or method == 'manual') and not installed
   

@@ -1,3 +1,4 @@
 ---
 bettercap_install_path: /opt/bettercap
 bettercap_version: "2.26.1" # This must correspond to a valid version in https://github.com/bettercap/bettercap/releases
+bettercap_file: bettercap_linux_amd64_v2.26.1.zip
