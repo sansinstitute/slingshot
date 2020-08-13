@@ -1,0 +1,4 @@
+---
+bluehydra_url: https://github.com/ZeroChaos-/blue_hydra.git
+bluehydra_install_path: /opt/blue_hydra
+bluehydra_version: master

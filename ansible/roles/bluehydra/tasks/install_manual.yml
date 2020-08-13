@@ -1,0 +1,45 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - bluez
+    - bluez-test-scripts
+    - bundler
+    - libsqlite3-dev
+    - python-bluez
+    - python-dbus
+    - ruby
+    - ruby-dev
+    - sqlite3
+    - ubertooth
+
+- name: Download blue_hydra via Git
+  git:
+    repo: "{{ bluehydra_url }}"
+    version: "{{ bluehydra_version}}"
+    dest: "{{ bluehydra_install_path }}"
+    
+- name: Install gems
+  shell: bundle install
+  args:
+    chdir: "{{ bluehydra_install_path }}"
+    
+- name: Create launcher script
+  blockinfile:
+    path: "{{ bluehydra_install_path }}/bluehydra-bootstrap.sh"
+    create: yes
+    mode: 0755
+    block: |
+      #!/bin/bash
+
+      echo "Starting BlueHydra..." 
+      cd {{ bluehydra_install_path }} && ./bin/blue_hydra "$@"
+    
+- name: Create symlink
+  file:
+    src: "{{ bluehydra_install_path}}/bluehydra-bootstrap.sh"
+    dest: "{{ symlink_path }}/blue_hydra"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"
