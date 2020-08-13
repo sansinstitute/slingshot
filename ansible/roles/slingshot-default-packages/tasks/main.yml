@@ -16,6 +16,7 @@
     - hping3
     - iputils-ping
     - jq
+    - libssl-dev
     - lsof
     - net-tools
     - netcat
