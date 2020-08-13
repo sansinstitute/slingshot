@@ -26,6 +26,14 @@
     content: 'export PATH=$PATH:{{ symlink_path }}'
   when: create_symlinks is defined and create_symlinks
 
+- name: Add /opt/bin to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    create: yes
+    regexp: "^Defaults	secure_path="
+    line: "Defaults	secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:{{ symlink_path }}\""
+  when: create_symlinks is defined and create_symlinks
+
 - name: Set root password
   user:
     name: root
@@ -48,6 +56,7 @@
   unarchive:
     src: "/tmp/labs.tar.gz"
     dest: "{{ user_home }}"
+    remote_src: yes
     keep_newer: yes
 
 - name: Alias more to 'less -FX' for user
@@ -67,17 +76,6 @@
     regexp: "^alias more="
     line: "alias more='less -FX'"
 
-#- name: Copy test playbook to /root/
-#  copy:
-#    src: /tmp/test.yml
-#    dest: /root/
-
-- name: Enable localhost for ansible
-  lineinfile:
-    path: /etc/ansible/hosts
-    regexp: "^localhost"
-    line: localhost ansible_connection=local
-
 - name: Change ownership of user lab files
   file:
     path: "{{ user_home }}"
@@ -89,18 +87,6 @@
 - name: Install linux-virtual package
   apt:
     name: linux-virtual
-    
-#- name: Remove linux-generic package
-#  apt:
-#    name: linux-generic
-#    autoremove: yes
-#    purge: yes
-    
-- name: Remove linux-firmware package
-  apt:
-    name: linux-firmware
-    state: absent
-    purge: yes
     
 - name: Run update-grub
   shell: "update-grub"
