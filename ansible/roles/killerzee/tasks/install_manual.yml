@@ -1,0 +1,24 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - python-setuptools
+    - python-usb
+    
+- include_role:
+    name: "{{ item }}"
+  loop:
+  - rfcat
+
+- name: Download killerzee via Git
+  git:
+    repo: "{{ killerzee_url }}"
+    version: "{{ killerzee_version}}"
+    dest: "{{ killerzee_install_path }}"
+    
+- name: Install killerzee
+  shell: "python setup.py install"
+  args:
+    chdir: "{{ killerzee_install_path }}"
+    
+- import_tasks: "tasks/mark_installed.yml"

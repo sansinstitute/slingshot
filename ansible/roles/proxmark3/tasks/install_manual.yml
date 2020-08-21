@@ -1,0 +1,33 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - gcc-arm-none-eabi
+    - git
+    - libncurses5-dev
+    - libpcsclite-dev
+    - libqt4-dev
+    - libreadline-dev
+    - libreadline5
+    - libstdc++-arm-none-eabi-newlib
+    - libusb-0.1-4
+    - libusb-dev
+    - p7zip
+    - pcscd
+    - perl
+    - pkg-config
+    - wget
+
+- name: Download proxmark3 via Git
+  git:
+    repo: "{{ proxmark3_url }}"
+    version: "{{ proxmark3_version}}"
+    dest: "{{ proxmark3_install_path }}"
+    
+- name: Build proxmark3
+  make:
+    chdir: "{{ proxmark3_install_path }}"
+    target: all
+    
+- import_tasks: "tasks/mark_installed.yml"

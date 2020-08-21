@@ -1,0 +1,23 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - debhelper
+    - dh-systemd
+    - libbladerf-dev
+    - libncurses5-dev
+    - librtlsdr-dev
+    - pkg-config
+
+- name: Download dump1090 via Git
+  git:
+    repo: "{{ dump1090_url }}"
+    version: "{{ dump1090_version}}"
+    dest: "{{ dump1090_install_path }}"
+    
+- name: Build dump1090
+  make:
+    chdir: "{{ dump1090_install_path }}"
+    
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,4 @@
+---
+kismapping_url: https://github.com/inguardians/kismapping.git
+kismapping_install_path: /opt/kismapping
+kismapping_version: master

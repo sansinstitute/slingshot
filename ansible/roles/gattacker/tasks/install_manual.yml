@@ -1,0 +1,19 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - bluetooth
+    - bluez
+    - libbluetooth-dev
+    - libudev-dev
+    - nodejs
+
+- include_role:
+    name: install-modules
+  vars:
+    npm_modules:
+    - bleno
+    - noble
+    - gattacker
+
+- import_tasks: "tasks/mark_installed.yml"

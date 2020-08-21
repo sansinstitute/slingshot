@@ -1,0 +1,41 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - autoconf
+    - build-essential
+    - cmake
+    - librtlsdr-dev
+    - libtool
+    - libusb-1.0-0
+    - libusb-1.0-0-dev
+    - pkg-config
+    - rtl-sdr
+
+- name: Download rtl433 via Git
+  git:
+    repo: "{{ rtl433_url }}"
+    version: "{{ rtl433_version}}"
+    dest: "{{ rtl433_install_path }}"
+    
+- name: Create build directory
+  file:
+    path: "{{ rtl433_install_path }}/build"
+    state: directory
+    mode: "0755"
+    
+- name: Run cmake
+  shell: "cmake ../"
+  args:
+    chdir: "{{ rtl433_install_path }}/build"
+    
+- name: Build rtl433
+  make:
+    chdir: "{{ rtl433_install_path }}/build"
+    
+- name: Install rtl433
+  make:
+    chdir: "{{ rtl433_install_path }}/build"
+    target: install
+
+- import_tasks: "tasks/mark_installed.yml"

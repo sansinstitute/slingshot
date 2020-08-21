@@ -1,0 +1,23 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - libbluetooth-dev
+
+- name: Download bss via Git
+  git:
+    repo: "{{ bss_url }}"
+    version: "{{ bss_version}}"
+    dest: "{{ bss_install_path }}"
+    
+- name: Build bss
+  make:
+    chdir: "{{ bss_install_path }}"
+    
+- name: Install bss
+  make:
+    chdir: "{{ bss_install_path }}"
+    target: install
+    
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,41 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - cmake
+    - libusb-1.0-0
+    - libusb-1.0-0-dev
+
+- name: Download rtl-sdr via Git
+  git:
+    repo: "{{ rtlsdr_url }}"
+    version: "{{ rtlsdr_version}}"
+    dest: "{{ rtlsdr_install_path }}"
+    
+- name: Create build directory
+  file:
+    path: "{{ rtlsdr_install_path }}/build"
+    state: directory
+    mode: "0755"
+    
+- name: Run cmake
+  shell: "cmake ../ -DINSTALL_UDEV_RULES=ON"
+  args:
+    chdir: "{{ rtlsdr_install_path }}/build"
+    
+- name: Build rtl-sdr
+  make:
+    chdir: "{{ rtlsdr_install_path }}/build"
+    
+- name: Install rtl-sdr
+  make:
+    chdir: "{{ rtlsdr_install_path }}/build"
+    target: install
+    
+- name: Run ldconfig
+  shell: "ldconfig"
+  args:
+    chdir: "{{ rtlsdr_install_path }}/build"
+
+- import_tasks: "tasks/mark_installed.yml"

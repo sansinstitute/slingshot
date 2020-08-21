@@ -1,0 +1,4 @@
+---
+proxmark3_url: https://github.com/Proxmark/proxmark3.git
+proxmark3_install_path: /opt/proxmark3
+proxmark3_version: master

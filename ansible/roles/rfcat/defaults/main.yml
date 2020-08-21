@@ -1,0 +1,4 @@
+---
+rfcat_install_path: /opt/rfcat
+rfcat_url: https://github.com/atlas0fd00m/rfcat.git
+rfcat_version: "master"

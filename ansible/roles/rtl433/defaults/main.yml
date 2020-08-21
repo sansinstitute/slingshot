@@ -1,0 +1,4 @@
+---
+rtl433_url: https://github.com/merbanan/rtl_433.git
+rtl433_install_path: /opt/rtl433
+rtl433_version: master

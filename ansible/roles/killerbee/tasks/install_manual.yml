@@ -1,0 +1,26 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - libgcrypt-dev
+    - python-cairo
+    - python-crypto
+    - python-dev
+    - python-gtk2
+    - python-serial
+    - python-setuptools
+    - python-usb
+    - scapy
+
+- name: Download killerbee via Git
+  git:
+    repo: "{{ killerbee_url }}"
+    version: "{{ killerbee_version}}"
+    dest: "{{ killerbee_install_path }}"
+    
+- name: Install killerbee
+  shell: "python setup.py install"
+  args:
+    chdir: "{{ killerbee_install_path }}"
+    
+- import_tasks: "tasks/mark_installed.yml"

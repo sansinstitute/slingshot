@@ -1,0 +1,22 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+
+- name: Download btcrack via Git
+  git:
+    repo: "{{ btcrack_url }}"
+    version: "{{ btcrack_version}}"
+    dest: "{{ btcrack_install_path }}"
+    
+- name: Build btcrack
+  make:
+    chdir: "{{ btcrack_install_path }}"
+    
+- name: Install btcrack
+  make:
+    chdir: "{{ btcrack_install_path }}"
+    target: install
+    
+- import_tasks: "tasks/mark_installed.yml"

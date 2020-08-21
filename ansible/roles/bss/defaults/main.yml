@@ -1,0 +1,4 @@
+---
+bss_url: https://github.com/joswr1ght/bss.git
+bss_install_path: /opt/bss
+bss_version: master

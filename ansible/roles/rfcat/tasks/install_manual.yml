@@ -1,0 +1,35 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - libusb-1.0-0
+    - libusb-1.0-0-dev
+    - sdcc=3.5.0+dfsg-2build1
+
+- name: Install pip
+  shell: "python -m pip install -U pip"
+
+- name: Download rfcat via Git
+  git:
+    repo: "{{ rfcat_url }}"
+    version: "{{ rfcat_version}}"
+    dest: "{{ rfcat_install_path }}"
+
+- name: Install pip requirements
+  pip:
+    requirements: "{{ rfcat_install_path }}/requirements.txt"
+    executable: pip2
+
+- name: Install additional pip packages
+  pip:
+    name:
+    - pyreadline
+    - PySide2
+
+- name: Run rfcat installer
+  shell: python2 setup.py install
+  args:
+    chdir: "{{ rfcat_install_path }}"
+
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,28 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - haskell-stack
+
+- name: Download kismapping via Git
+  git:
+    repo: "{{ kismapping_url }}"
+    version: "{{ kismapping_version}}"
+    dest: "{{ kismapping_install_path }}"
+    
+- name: Setup ghc
+  shell: "stack setup"
+  args:
+    chdir: "{{ kismapping_install_path }}"
+    
+- name: Build kismapping
+  shell: "stack build"
+  args:
+    chdir: "{{ kismapping_install_path }}"
+    
+- name: Install kismapping
+  shell: "stack install"
+  args:
+    chdir: "{{ kismapping_install_path }}"
+    
+- import_tasks: "tasks/mark_installed.yml"

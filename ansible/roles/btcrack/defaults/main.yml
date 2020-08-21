@@ -1,0 +1,4 @@
+---
+btcrack_url: https://github.com/ifoundthetao/btcrack.git
+btcrack_install_path: /opt/btcrack
+btcrack_version: master
