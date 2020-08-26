@@ -5,7 +5,7 @@
 - name: Validate variables
   assert:
     that:
-    - reconng_version is regex("v\d+\.\d+\.\d+") or reconng_version is match("master")
+    - recon_ng_version is regex("v\d+\.\d+\.\d+") or recon_ng_version is match("master")
 
 - import_tasks: "tasks/check_installed.yml"
 

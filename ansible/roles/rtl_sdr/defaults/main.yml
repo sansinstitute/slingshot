@@ -1,4 +1,4 @@
 ---
-rtlsdr_url: https://github.com/osmocom/rtl-sdr.git
-rtlsdr_install_path: /opt/rtl-sdr
+rtlsdr_url: https://github.com/osmocom/rtl_sdr.git
+rtlsdr_install_path: /opt/rtl_sdr
 rtlsdr_version: master

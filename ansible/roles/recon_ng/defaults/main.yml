@@ -1,3 +1,3 @@
 ---
-reconng_install_path: /opt/recon-ng
-reconng_version: master # This must correspond to a valid tag in https://bitbucket.org/LaNMaSteR53/recon-ng/src/master/
+recon_ng_install_path: /opt/recon-ng
+recon_ng_version: master # This must correspond to a valid tag in https://bitbucket.org/LaNMaSteR53/recon-ng/src/master/

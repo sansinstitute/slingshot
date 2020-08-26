@@ -1,6 +1,6 @@
 ---
 - import_role:
-    name: install-modules
+    name: install_modules
   vars:
     ptf_modules:
     - exploitation/beef

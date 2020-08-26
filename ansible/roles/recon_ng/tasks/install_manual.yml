@@ -12,8 +12,8 @@
 - name: Download recon-ng via Git
   git:
     repo: https://github.com/lanmaster53/recon-ng.git
-    version: "{{ reconng_version}}"
-    dest: "{{ reconng_install_path }}"
+    version: "{{ recon_ng_version}}"
+    dest: "{{ recon_ng_install_path }}"
 
 - name: Install pip
   command: python -m pip install -U pip
@@ -23,6 +23,6 @@
 
 - name: Install requirements via pip
   pip:
-    requirements: "{{ reconng_install_path }}/REQUIREMENTS"
+    requirements: "{{ recon_ng_install_path }}/REQUIREMENTS"
 
 - import_tasks: "tasks/mark_installed.yml"

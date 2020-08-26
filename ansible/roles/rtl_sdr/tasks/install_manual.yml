@@ -7,7 +7,7 @@
     - libusb-1.0-0
     - libusb-1.0-0-dev
 
-- name: Download rtl-sdr via Git
+- name: Download rtl_sdr via Git
   git:
     repo: "{{ rtlsdr_url }}"
     version: "{{ rtlsdr_version}}"
@@ -24,11 +24,11 @@
   args:
     chdir: "{{ rtlsdr_install_path }}/build"
     
-- name: Build rtl-sdr
+- name: Build rtl_sdr
   make:
     chdir: "{{ rtlsdr_install_path }}/build"
     
-- name: Install rtl-sdr
+- name: Install rtl_sdr
   make:
     chdir: "{{ rtlsdr_install_path }}/build"
     target: install

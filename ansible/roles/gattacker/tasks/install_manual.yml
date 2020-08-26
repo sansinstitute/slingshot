@@ -9,7 +9,7 @@
     - nodejs
 
 - include_role:
-    name: install-modules
+    name: install_modules
   vars:
     npm_modules:
     - bleno
