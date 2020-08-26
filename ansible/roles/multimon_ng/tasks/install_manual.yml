@@ -1,0 +1,34 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - cmake
+
+- name: Download multimon-ng via Git
+  git:
+    repo: "{{ multimonng_url }}"
+    version: "{{ multimonng_version}}"
+    dest: "{{ multimonng_install_path }}"
+    
+- name: Create build directory
+  file:
+    path: "{{ multimonng_install_path }}/build"
+    state: directory
+    mode: "0755"
+    
+- name: Run cmake
+  shell: "cmake ../"
+  args:
+    chdir: "{{ multimonng_install_path }}/build"
+    
+- name: Build multimon-ng
+  make:
+    chdir: "{{ multimonng_install_path }}/build"
+    
+- name: Install multimon-ng
+  make:
+    chdir: "{{ multimonng_install_path }}/build"
+    target: install
+
+- import_tasks: "tasks/mark_installed.yml"

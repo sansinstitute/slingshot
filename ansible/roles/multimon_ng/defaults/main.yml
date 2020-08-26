@@ -1,0 +1,4 @@
+---
+multimonng_url: https://github.com/EliasOenal/multimon-ng.git
+multimonng_install_path: /opt/multimon-ng
+multimonng_version: master

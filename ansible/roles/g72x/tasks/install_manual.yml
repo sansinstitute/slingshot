@@ -1,0 +1,31 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - make
+    - build-essential
+
+- name: Download and unarchive g72x
+  unarchive:
+    src: "http://www.ps-auxw.de/g72x++.tar.bz2"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Move g72x files into target install path
+  shell: "rm -rf {{ g72x_install_path }}; mv /tmp/g72x/ {{ g72x_install_path }}/"
+  args:
+    warn: no
+
+- name: Build asleap
+  shell: "./build.sh"
+  args:
+    chdir: "{{ g72x_install_path }}"
+
+- name: Create symlink
+  file:
+    src: "{{ g72x_install_path }}/decode-g72x"
+    dest: "{{ symlink_path }}/decode-g72x"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

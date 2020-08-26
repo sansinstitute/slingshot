@@ -1,0 +1,48 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+    - libnl-3-dev
+    - libnl-genl-3-dev
+    - libssl1.0-dev
+
+- name: Download hostapd-wpe patch via Git
+  git:
+    repo: "https://github.com/OpenSecurityResearch/hostapd-wpe.git"
+    version: "master"
+    dest: "{{ hostapdwpe_install_path }}"
+    
+- name: Download and unarchive hostapd-wpe 2.6
+  unarchive:
+    src: "https://w1.fi/releases/hostapd-2.6.tar.gz"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Move hostapd files into target install path
+  shell: "rm -rf {{ hostapdwpe_hostapd_install_path }}; mv /tmp/hostapd-2.6/ {{ hostapdwpe_hostapd_install_path }}/"
+  args:
+    warn: no
+    
+- name: Apply patch
+  shell: "patch -p1 < {{ hostapdwpe_install_path }}/hostapd-wpe.patch"
+  args:
+    chdir: "{{ hostapdwpe_hostapd_install_path }}"
+    
+- name: Build hostapd-wpe
+  make:
+    chdir: "{{ hostapdwpe_hostapd_install_path }}/hostapd"
+    
+- name: Run bootstrap
+  shell: "./bootstrap"
+  args:
+    chdir: "{{ hostapdwpe_install_path }}/certs"
+    
+- name: Create symlink
+  file:
+    src: "{{ hostapdwpe_hostapd_install_path }}/hostapd/hostapd-wpe"
+    dest: "{{ symlink_path }}/hostapd-wpe"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+    
+- import_tasks: "tasks/mark_installed.yml"

@@ -1,0 +1,4 @@
+---
+crackle_url: https://github.com/mikeryan/crackle.git
+crackle_install_path: /opt/crackle
+crackle_version: master

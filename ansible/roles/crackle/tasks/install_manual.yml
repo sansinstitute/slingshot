@@ -1,0 +1,22 @@
+---
+- name: Install apt package prerequisites
+  apt:
+    name:
+    - build-essential
+
+- name: Download crackle via Git
+  git:
+    repo: "{{ crackle_url }}"
+    version: "{{ crackle_version}}"
+    dest: "{{ crackle_install_path }}"
+    
+- name: Build crackle
+  make:
+    chdir: "{{ crackle_install_path }}"
+    
+- name: Install crackle
+  make:
+    chdir: "{{ crackle_install_path }}"
+    target: install
+    
+- import_tasks: "tasks/mark_installed.yml"
