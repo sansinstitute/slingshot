@@ -20,7 +20,7 @@ You must purchase and install VMWare Workstation (<https://www.vmware.com/produc
 
 You must install Vagrant. The quickest way is through a package manager:
 
-* MacOS: `brew install vagrant`
+* MacOS: `brew cask install vagrant`
 * Linux: `apt-get install vagrant`
 * Windows: `choco install vagrant`
 
