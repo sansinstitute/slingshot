@@ -30,4 +30,18 @@
     chdir: "{{ proxmark3_install_path }}"
     target: all
     
+- name: Create client symlinks
+  file:
+    src: "{{ proxmark3_install_path }}/client/{{ proxmark3_item }}"
+    dest: "{{ symlink_path }}/{{ proxmark3_item }}"
+    state: link
+  loop:
+  - flasher
+  - fpga_compress
+  - proxmark3
+  - unbind-proxmark
+  loop_control:
+    loop_var: proxmark3_item
+  when: create_symlinks is defined and create_symlinks
+    
 - import_tasks: "tasks/mark_installed.yml"

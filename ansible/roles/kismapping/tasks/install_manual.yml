@@ -10,19 +10,30 @@
     version: "{{ kismapping_version}}"
     dest: "{{ kismapping_install_path }}"
     
-- name: Setup ghc
-  shell: "stack setup"
-  args:
-    chdir: "{{ kismapping_install_path }}"
+- name: Change ownership of kismapping directory
+  file:
+    path: "{{ kismapping_install_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- block:
+  - name: Setup ghc
+    shell: "stack setup"
+    args:
+      chdir: "{{ kismapping_install_path }}"
     
-- name: Build kismapping
-  shell: "stack build"
-  args:
-    chdir: "{{ kismapping_install_path }}"
+  - name: Build kismapping
+    shell: "stack build"
+    args:
+      chdir: "{{ kismapping_install_path }}"
     
-- name: Install kismapping
-  shell: "stack install"
-  args:
-    chdir: "{{ kismapping_install_path }}"
+  - name: Install kismapping
+    shell: "stack install"
+    args:
+      chdir: "{{ kismapping_install_path }}"
+  become: yes
+  become_user: "{{ user_name }}"
     
 - import_tasks: "tasks/mark_installed.yml"

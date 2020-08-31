@@ -20,4 +20,16 @@
   make:
     chdir: "{{ dump1090_install_path }}"
     
+- name: Create symlink
+  file:
+    src: "{{ dump1090_install_path }}/{{ dump1090_item }}"
+    dest: "{{ symlink_path }}/{{ dump1090_item }}"
+    state: link
+  loop:
+  - dump1090
+  - view1090
+  loop_control:
+    loop_var: dump1090_item
+  when: create_symlinks is defined and create_symlinks
+    
 - import_tasks: "tasks/mark_installed.yml"
