@@ -13,7 +13,9 @@
     - rtl-sdr
 
 - name: Download rtl433 via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ rtl433_url }}"
     version: "{{ rtl433_version}}"
     dest: "{{ rtl433_install_path }}"

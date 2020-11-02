@@ -11,7 +11,9 @@
   pip:
     name: pexpect
 
-- git:
+- include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/SecurityRiskAdvisors/VECTR.git
     dest: /tmp/vectr
     force: yes

@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
         commit = `git log --format="%H" -n 1`
         version = "#{time.year}.#{time.month}.#{commit[0..6]}"
 
-        machine.vm.box = "bento/ubuntu-18.04"
+        machine.vm.box = "generic/ubuntu1804"
         machine.vm.hostname = "slingshot"
 
         machine.vm.provider "vmware_fusion" do |v|
@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
 
         machine.vm.provision :file, source: "slingshot.tar.gz", destination: "/tmp/labs.tar.gz"
 
-        machine.vm.provision "setup", type: "ansible_local" do |ansible|
+        machine.vm.provision "setup", type: "ansible" do |ansible|
             ansible.playbook = "ansible/slingshot.yml"
         end
 

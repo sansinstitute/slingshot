@@ -10,7 +10,9 @@
     - python-mechanize
 
 - name: Download recon-ng via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/lanmaster53/recon-ng.git
     version: "{{ recon_ng_version}}"
     dest: "{{ recon_ng_install_path }}"
@@ -18,11 +20,19 @@
 - name: Install pip
   command: python -m pip install -U pip
 
-- name: Downgrade pip to 9.0.3
-  command: python -m pip install 'pip==9.0.3' --force-reinstall
-
 - name: Install requirements via pip
   pip:
     requirements: "{{ recon_ng_install_path }}/REQUIREMENTS"
-
+    
+- name: Create symlink
+  file:
+    src: "{{ recon_ng_install_path }}/{{ item }}"
+    dest: "{{ symlink_path }}/recon-ng"
+    state: link
+  loop:
+  - recon-ng
+  - recon-web
+  - recon-cli
+  when: create_symlinks is defined and create_symlinks
+  
 - import_tasks: "tasks/mark_installed.yml"

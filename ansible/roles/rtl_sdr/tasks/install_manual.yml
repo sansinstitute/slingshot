@@ -8,7 +8,9 @@
     - libusb-1.0-0-dev
 
 - name: Download rtl_sdr via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ rtlsdr_url }}"
     version: "{{ rtlsdr_version}}"
     dest: "{{ rtlsdr_install_path }}"

@@ -1,0 +1,23 @@
+---
+- name: Add Kismet apt signing key
+  apt_key:
+    url: https://www.kismetwireless.net/repos/kismet-release.gpg.key
+    state: present
+    
+- name: Add Kismet repository
+  apt_repository:
+    repo: "{{ kismet_repo }}"
+    state: present
+
+- name: Install Kismet
+  apt:
+    name: kismet
+    update_cache: yes
+    
+- name: Add user to kismet group 
+  user:
+    name: "{{ user_name }}"
+    groups: kismet
+    append: yes
+
+- import_tasks: "tasks/mark_installed.yml"

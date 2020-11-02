@@ -6,7 +6,7 @@
 - name: Create directory for tracking task state
   file:
     path: "{{ state_path }}"
-    mode: 0777
+    state: directory
     recurse: yes
 
 - name: "Read state from {{ state_path }}"

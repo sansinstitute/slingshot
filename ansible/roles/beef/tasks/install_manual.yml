@@ -30,7 +30,9 @@
     chdir: "{{ user_home }}"
     
 - name: Checkout latest BeEF code
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/beefproject/beef.git
     version: "{{ beef_version }}"
     dest: "{{ beef_install_path }}"

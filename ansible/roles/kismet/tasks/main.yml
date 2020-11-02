@@ -1,0 +1,17 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "apt")
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_apt.yml"
+  when: (method is not defined or method == 'apt') and not installed
+
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: kismet

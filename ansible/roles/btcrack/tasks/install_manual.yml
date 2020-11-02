@@ -5,7 +5,9 @@
     - build-essential
 
 - name: Download btcrack via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ btcrack_url }}"
     version: "{{ btcrack_version}}"
     dest: "{{ btcrack_install_path }}"

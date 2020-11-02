@@ -12,6 +12,7 @@
 - name: Set neo4j.conf location
   set_fact:
      neo4j_conf_path: "{{ neo4j_install_path}}/conf/neo4j.conf"
+     cacheable: yes
      
 - name: Add neo4j to PATH
   lineinfile:

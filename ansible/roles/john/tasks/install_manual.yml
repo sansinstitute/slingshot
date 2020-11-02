@@ -15,7 +15,9 @@
     - pocl-opencl-icd
 
 - name: Download john via git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/magnumripper/JohnTheRipper.git
     dest: "{{ john_install_path }}"
     version: "{{ john_version }}"

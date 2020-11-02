@@ -26,6 +26,7 @@
       - pavucontrol
       - eom
       - language-selector-gnome
+      - synapse
       
   - name: Create Orca application menu entry
     copy:
@@ -66,6 +67,12 @@
       src: backgrounds/
       dest: /usr/share/backgrounds/
       force: yes
+      
+  - name: Copy Slingshot icons
+    copy:
+      src: icons/
+      dest: /usr/share/icons/
+      force: yes
 
   - name: Add apt repository for Papirus theme
     apt_repository:
@@ -86,15 +93,90 @@
       path: /etc/lightdm/lightdm-gtk-greeter.conf
       regexp: '^#?background=.*$'
       line: 'background=/usr/share/backgrounds/{{ login_background }}'
+      
+  - name: Create applications-merged directory
+    file:
+      path: /etc/xdg/menus/applications-merged
+      state: directory
+      mode: 0755
+
+  - name: Add application menu categories
+    copy:
+      dest: /etc/xdg/menus/applications-merged/slingshot-applications.menu
+      mode: 0644
+      content: |
+        <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+                "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+        <Menu>
+        <Name>Applications</Name> <!-- This is necessary for your directory to appear in the applications drop down -->
+        <Menu> <!--Slingshot -->
+        <Name>Slingshot</Name>
+        <Directory>slingshot.directory</Directory>
+        <Include>
+        <Category>Slingshot</Category>
+        </Include>
+        </Menu> <!-- End Slingshot -->
+        </Menu> <!-- End Applications -->
+        
+  - name: Add application directory
+    copy:
+      dest: /usr/share/desktop-directories/slingshot.directory
+      mode: 0644
+      content: |
+        [Desktop Entry]
+        Type=Directory
+        Name=Slingshot
+        Icon=/usr/share/icons/slingshot.png
 
   - import_tasks: "tasks/mark_installed.yml"
   when: not installed
 
 - block:
-  - name: "Copy panel config file"
+  - name: Copy panel config file
     copy:
       src: user
       dest: ~/.config/dconf/
+      
+  - name: Create ~/.config/synapse directory
+    file:
+      path: ~/.config/synapse
+      state: directory
+      mode: 0755
+      recurse: yes
+      
+  - name: Configure synapse
+    copy:
+      dest: ~/.config/synapse/config.json
+      mode: 0644
+      content: |
+        {
+          "ui" : {
+            "global" : {
+              "ui-type" : "side-doish",
+              "show-indicator" : false
+            }
+          }
+        }
+        
+  - name: Create ~/.config/autostart directory
+    file:
+      path: ~/.config/autostart
+      state: directory
+      mode: 0755
+      recurse: yes
+        
+  - name: Enable synapse autostart
+    copy:
+      dest: ~/.config/autostart/synapse.desktop
+      mode: 0664
+      content: |
+        [Desktop Entry]
+        Name=Synapse
+        Exec=synapse --startup
+        Encoding=UTF-8
+        Type=Application
+        X-GNOME-Autostart-enabled=true
+        Icon=synapse
 
   - name: Configure MATE appearance
     shell: |
@@ -123,6 +205,9 @@
       gsettings set org.mate.interface icon-theme 'Papirus-Light'
       gsettings set org.mate.Marco.general theme 'BlueMenta'
       gsettings set org.mate.peripherals-mouse cursor-size 18
+      
+      # Enable keyboard layouts indicator
+      gsettings set org.mate.peripherals-keyboard-xkb.kbd layouts "['us', 'cn', 'in']"
     args:
       executable: /bin/bash
 
@@ -144,13 +229,13 @@
       
   - name: Create autostart directory
     file:
-      path: "~/.config/autostart"
+      path: ~/.config/autostart
       state: directory
       mode: 0755
       
   - name: Create enable audio autostart file
     copy:
-      dest: "~/.config/autostart/Enable-Audio.desktop"
+      dest: ~/.config/autostart/Enable-Audio.desktop
       mode: 0644
       content: |
         [Desktop Entry]
@@ -161,7 +246,7 @@
 
   - name: Create feedback shortcut
     copy:
-      dest: "~/Desktop/Feedback.desktop"
+      dest: ~/Desktop/Feedback.desktop
       mode: 0644
       content: |
         [Desktop Entry]

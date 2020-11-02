@@ -1,6 +1,8 @@
 ---
 - name: Download checksec via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/slimm609/checksec.sh.git
     dest: "{{ checksec_install_path }}"
 

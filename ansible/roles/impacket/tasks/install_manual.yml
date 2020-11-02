@@ -10,7 +10,9 @@
     name: virtualenv
 
 - name: Download impacket via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/SecureAuthCorp/impacket.git
     dest: "{{ impacket_install_path }}"
 

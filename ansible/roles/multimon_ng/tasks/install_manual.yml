@@ -6,7 +6,9 @@
     - cmake
 
 - name: Download multimon-ng via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ multimonng_url }}"
     version: "{{ multimonng_version}}"
     dest: "{{ multimonng_install_path }}"

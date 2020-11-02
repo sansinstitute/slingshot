@@ -19,7 +19,9 @@
     name: virtualenv
 
 - name: Download empire via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ empire_url }}"
     version: "{{ empire_version}}"
     dest: "{{ empire_install_path }}"

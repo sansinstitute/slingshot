@@ -11,7 +11,9 @@
     name: virtualenv
 
 - name: Download SilenTrinity via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ silenttrinity_url }}"
     version: "{{ silenttrinity_version}}"
     dest: "{{ silenttrinity_install_path }}"

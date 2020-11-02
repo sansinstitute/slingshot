@@ -11,7 +11,9 @@
   shell: "python -m pip install -U pip"
 
 - name: Download rfcat via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ rfcat_url }}"
     version: "{{ rfcat_version}}"
     dest: "{{ rfcat_install_path }}"

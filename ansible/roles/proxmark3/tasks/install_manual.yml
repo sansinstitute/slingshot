@@ -20,7 +20,9 @@
     - wget
 
 - name: Download proxmark3 via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ proxmark3_url }}"
     version: "{{ proxmark3_version}}"
     dest: "{{ proxmark3_install_path }}"

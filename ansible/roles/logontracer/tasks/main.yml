@@ -5,8 +5,8 @@
 - name: Validate variables
   assert:
     that:
-    - method is not defined or (method == "docker")
-    
+    - method is not defined or (method == "manual" or method == "docker")
+
 - import_tasks: "tasks/check_installed.yml"
 
 - include_tasks: "install_manual.yml"

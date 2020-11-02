@@ -1,6 +1,8 @@
 ---
 - name: Download mimikittenz via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/jamesshew/mimikittenz.git
     dest: "{{ mimikittenz_install_path }}"
 

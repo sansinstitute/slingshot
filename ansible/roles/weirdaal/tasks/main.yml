@@ -2,26 +2,16 @@
 - include_tasks: "tasks/override.yml"
   when: override is defined
 
-- name: Install apt package prerequisites
-  apt:
-    name:
-    - git
-    - python3
-    - python3-venv
-    - python3-pip
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "manual")
 
 - import_tasks: "tasks/check_installed.yml"
 
-- block:
-  - name: Checkout latest weirdAAL code
-    git:
-      repo: https://github.com/carnal0wnage/weirdAAL.git
-      dest: "{{ weirdaal_install_path }}"
+- include_tasks: "install_manual.yml"
+  when: (method is not defined or method == 'manual') and not installed
 
-  - name: Install weirdAAL
-    script: install.sh
-    args:
-      chdir: "{{ weirdaal_install_path }}"
-
-  - import_tasks: "tasks/mark_installed.yml"
-  when: not installed
+- include_tasks: "tasks/test.yml"
+  vars:
+    command: weirdaal

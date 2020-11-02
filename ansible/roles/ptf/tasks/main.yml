@@ -27,7 +27,9 @@
     shell: python -m easy_install pyOpenSSL
 
   - name: Checkout latest PtF code
-    git:
+    include_role:
+      name: git_cached
+    vars:
       repo: https://github.com/trustedsec/ptf.git
       version: "{{ ptf_version}}"
       dest: "{{ ptf_install_path }}"
