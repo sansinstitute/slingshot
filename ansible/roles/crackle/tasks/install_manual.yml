@@ -5,7 +5,9 @@
     - build-essential
 
 - name: Download crackle via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ crackle_url }}"
     version: "{{ crackle_version}}"
     dest: "{{ crackle_install_path }}"

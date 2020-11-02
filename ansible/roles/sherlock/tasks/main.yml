@@ -12,7 +12,9 @@
 - name: Install sherlock manually
   block:
   - name: Download sherlock via Git
-    git:
+    include_role:
+      name: git_cached
+    vars:
       repo: https://github.com/jamesshew/Sherlock.git
       dest: "{{ sherlock_install_path }}"
 

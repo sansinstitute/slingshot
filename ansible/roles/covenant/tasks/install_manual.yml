@@ -7,7 +7,9 @@
       dotnet_version: "2.2"
 
 - name: Checkout latest covenant code
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "https://github.com/cobbr/Covenant.git"
     dest: "{{ covenant_install_path }}"
 

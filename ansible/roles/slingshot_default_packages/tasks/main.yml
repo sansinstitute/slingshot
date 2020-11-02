@@ -18,6 +18,7 @@
     - jq
     - libssl-dev
     - lsof
+    - mate-tweak
     - net-tools
     - netcat
     - nmap
@@ -33,4 +34,5 @@
     - unzip
     - wapiti
     - wireshark
+    - whois
     - xterm

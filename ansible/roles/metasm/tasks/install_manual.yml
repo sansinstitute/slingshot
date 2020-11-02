@@ -38,7 +38,9 @@
   become_user: "{{ user_name }}"
   
 - name: Download metasm via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/jjyg/metasm.git
     dest: "{{ metasm_install_path }}"
     

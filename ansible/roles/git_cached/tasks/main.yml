@@ -1,0 +1,8 @@
+---
+- git:
+    repo: "{{ repo }}"
+    dest: "{{ dest }}"
+    version: "{{ version | default(omit) }}"
+    update: "{{ update | default(omit) }}"
+  register: result
+  until: result is success

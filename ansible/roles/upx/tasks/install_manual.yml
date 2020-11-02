@@ -8,6 +8,7 @@
   unarchive:
     src: "/tmp/upx-{{ upx_version }}-amd64_linux.tar.xz"
     dest: "/tmp/"
+    remote_src: yes
 
 - name: Move upx files into target install path
   shell: "rm -rf {{ upx_install_path }}/; mv /tmp/upx-{{ upx_version }}-amd64_linux/ {{ upx_install_path }}/"

@@ -1,6 +1,8 @@
 ---
 - name: Download mitmproxy via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/mitmproxy/mitmproxy.git
     dest: "{{ mitmproxy_install_path }}"
 

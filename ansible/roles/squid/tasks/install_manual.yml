@@ -17,6 +17,7 @@
   unarchive:
     src: /tmp/squid-4.5.tar.gz
     dest: /tmp
+    remote_src: yes
     
 - name: Run squid configure
   shell: |

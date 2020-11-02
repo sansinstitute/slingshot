@@ -1,5 +1,7 @@
 ---
-- git:
+- include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/SpiderLabs/Responder.git
     dest: "{{ responder_install_path }}"
 

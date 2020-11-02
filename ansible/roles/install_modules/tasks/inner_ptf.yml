@@ -1,6 +1,10 @@
 ---
 - set_fact:
     temp: "{{ module | regex_replace('^.*/','') }}"
+    
+- name: "Check if {{ temp }} is already installed"
+  set_fact:
+    installed: "{{ software[temp+'_installed'] | default(false) }}"
 
 - name: Install PtF module
   block:
@@ -23,4 +27,4 @@
       content: ""
       dest: "{{ state_path }}/{{ temp }}_installed"
       mode: '0644'
-  when: not (software[temp+'_installed'] | default(false))
+  when: not installed

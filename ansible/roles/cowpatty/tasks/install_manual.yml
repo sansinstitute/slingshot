@@ -8,7 +8,9 @@
     - clang
 
 - name: Checkout latest cowpatty code
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/joswr1ght/cowpatty.git
     dest: "{{ cowpatty_install_path }}"
 

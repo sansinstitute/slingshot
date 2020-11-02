@@ -27,7 +27,9 @@
     replace: "dbms.connector.http.listen_address=0.0.0.0:7474"
     
 - name: Checkout latest LogonTracer code
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "https://github.com/joswr1ght/LogonTracer.git"
     dest: "{{ logontracer_install_path }}"
     

@@ -5,7 +5,9 @@
     - haskell-stack
 
 - name: Download kismapping via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ kismapping_url }}"
     version: "{{ kismapping_version}}"
     dest: "{{ kismapping_install_path }}"

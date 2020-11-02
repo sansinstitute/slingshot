@@ -11,7 +11,9 @@
   - rfcat
 
 - name: Download killerzee via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ killerzee_url }}"
     version: "{{ killerzee_version}}"
     dest: "{{ killerzee_install_path }}"

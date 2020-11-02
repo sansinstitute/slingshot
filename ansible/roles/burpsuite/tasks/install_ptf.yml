@@ -1,0 +1,18 @@
+---
+- import_role:
+    name: install_modules
+  vars:
+    ptf_modules:
+    - exploitation/burp
+    
+- debug:
+    msg: "create_appmenu: {{ create_appmenu }}, appmenu_path: {{ appmenu_path }}"
+    
+- name: Create symlink
+  file:
+    src: "{{ burpsuite_install_path }}/burp.sh"
+    dest: "{{ symlink_path }}/burp"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"

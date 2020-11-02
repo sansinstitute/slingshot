@@ -13,7 +13,9 @@
     - scapy
 
 - name: Download killerbee via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ killerbee_url }}"
     version: "{{ killerbee_version}}"
     dest: "{{ killerbee_install_path }}"

@@ -1,0 +1,18 @@
+---
+- include_tasks: "tasks/override.yml"
+  when: override is defined
+
+- name: Validate variables
+  assert:
+    that:
+    - method is not defined or (method == "ptf")
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_local.yml"
+  when: (method is not defined or method == 'local') and not installed
+
+- import_tasks: "tasks/check_installed.yml"
+
+- include_tasks: "install_ptf.yml"
+  when: (method is not defined or method == 'ptf') and not installed

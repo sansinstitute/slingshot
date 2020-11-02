@@ -10,7 +10,9 @@
     name: virtualenv
 
 - name: Download koadic via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/zerosum0x0/koadic.git
     dest: "{{ koadic_install_path }}"
 

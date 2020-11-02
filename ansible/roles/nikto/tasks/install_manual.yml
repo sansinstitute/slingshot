@@ -1,6 +1,8 @@
 ---
 - name: Download nikto via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/sullo/nikto.git
     dest: "{{ nikto_install_path }}"
 

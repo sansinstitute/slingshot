@@ -12,6 +12,9 @@
     user_home: "/home/{{ user_name }}"
     create_symlinks: "{{ create_symlinks }}"
     symlink_path: "{{ symlink_path }}"
+    create_appmenu: "{{ create_appmenu }}"
+    appmenu_path: "{{ appmenu_path }}"
+    cacheable: yes
 
 - name: Create symlink directory
   file:
@@ -33,6 +36,13 @@
     regexp: "^Defaults	secure_path="
     line: "Defaults	secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:{{ symlink_path }}\""
   when: create_symlinks is defined and create_symlinks
+
+- name: Enable passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    create: yes
+    regexp: "^%sudo\\s+ALL="
+    line: "%sudo ALL=(ALL:ALL) NOPASSWD:ALL"
 
 - name: Set root password
   user:

@@ -14,7 +14,9 @@
     - ubertooth
 
 - name: Download blue_hydra via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ bluehydra_url }}"
     version: "{{ bluehydra_version}}"
     dest: "{{ bluehydra_install_path }}"

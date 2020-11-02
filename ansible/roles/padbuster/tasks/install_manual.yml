@@ -1,6 +1,8 @@
 ---
 - name: Download PadBuster via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: https://github.com/AonCyberLabs/PadBuster.git
     dest: "{{ padbuster_install_path }}"
     force: yes

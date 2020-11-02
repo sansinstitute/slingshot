@@ -8,7 +8,9 @@
     - libssl1.0-dev
 
 - name: Download hostapd-wpe patch via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "https://github.com/OpenSecurityResearch/hostapd-wpe.git"
     version: "master"
     dest: "{{ hostapdwpe_install_path }}"

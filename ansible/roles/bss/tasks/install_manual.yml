@@ -6,7 +6,9 @@
     - libbluetooth-dev
 
 - name: Download bss via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ bss_url }}"
     version: "{{ bss_version}}"
     dest: "{{ bss_install_path }}"

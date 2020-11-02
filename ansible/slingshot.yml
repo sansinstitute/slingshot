@@ -22,78 +22,148 @@
           name: slingshot_default_packages
 
     ######################################################################################
-#    - name: INSTALL PACKAGES, MODULES, AND ROLES
-#      block:
-#      - include_role:
-#          name: docker
-#        vars:
-#          docker_users:
-#          - "{{ user_name }}"
-#
-#      - include_role:
-#          name: "{{ item }}"
-#        loop:
-#        - asleap
-##        - beef
-#        - bettercap
-#        - checksec
-#        - chrome
-#        - covenant
-#        - cowpatty
-#        - empire3
-#        - eql
-#        - exploitdb
-##        - eyewitness
-#        - flamingo
-#        - hashcat
-#        - john
-#        - koadic
-#        - logontracer
-#        - metasm
-#        - metasploit
-#        - mimikittenz
-#        - nikto
-#        - nmap
-#        - padbuster
-#        - powershell
-#        - ptf
-#        - recon_ng
-#        - responder
-#        - sherlock
-#        - snmpcheck
-#        - sqlmap
-#        - upx
-#        - veil
-#        - weirdaal
-#        - zap
-#
-#      - include_role:
-#          name: rita
-#        vars:
-#          override:
-#            rita_install_bro: no
-#
-#      - include_role:
-#          name: wordlists
-#        vars:
-#          override:
-#            wordlists_sources:
-#            - rockyou.txt.zip
-#
-#      - include_role:
-#          name: install_modules
-#        vars:
-#          ptf_modules:
-#          - exploitation/burp
-#          - exploitation/ettercap
-#          - exploitation/setoolkit
-#          - intelligence-gathering/masscan
-#          - intelligence-gathering/unicornscan
-#          - vulnerability-analysis/hydra
-#          - vulnerability-analysis/openvas
-#          - vulnerability-analysis/wpscan
-#          - wireless/aircrackng
-#          - wireless/kismet
+    - name: INSTALL PACKAGES, MODULES, AND ROLES
+      block:
+      - name: Install apt packages
+        apt:
+          update_cache: yes
+          name:
+          - ettercap-graphical
+          - masscan
+      
+      - include_role:
+          name: docker
+        vars:
+          docker_users:
+          - "{{ user_name }}"
+
+      - include_role:
+          name: "{{ item }}"
+        loop:
+        - asleap
+        - beef
+        - bettercap
+        - burpsuite
+        - checksec
+        - chrome
+        - covenant
+        - cowpatty
+        - empire3
+        - eql
+        - exploitdb
+        - eyewitness
+        - flamingo
+        - hashcat
+        - john
+        - kismet
+        - koadic
+        - metasm
+        - metasploit
+        - mimikittenz
+        - nikto
+        - nmap
+        - padbuster
+        - powershell
+        - ptf
+        - recon_ng
+        - responder
+        - sherlock
+        - snmpcheck
+        - sqlmap
+        - upx
+        - veil
+        - weirdaal
+        - zap
+
+      - include_role:
+          name: rita
+        vars:
+          override:
+            rita_install_bro: no
+
+      - include_role:
+          name: wordlists
+        vars:
+          override:
+            wordlists_sources:
+            - rockyou.txt.zip
+
+      - include_role:
+          name: install_modules
+        vars:
+          ptf_modules:
+          - exploitation/setoolkit
+          - intelligence-gathering/unicornscan
+          - vulnerability-analysis/hydra
+          - vulnerability-analysis/openvas
+          - vulnerability-analysis/wpscan
+          - wireless/aircrackng
+          
+      - name: Create cmd.sh expect commandlet
+        copy:
+          dest: /opt/bin/cmd.sh
+          mode: 0755
+          content: |
+            #!/usr/bin/expect
+            log_user 0
+            set cmd [lindex $argv 0];
+            spawn bash
+            expect "$ "
+            send "$cmd\r"
+            interact
+
+      - name: Create menu entries
+        copy:
+          dest: "{{ appmenu_path }}/{{ item.file }}.desktop"
+          mode: 0644
+          content: |
+            [Desktop Entry]
+            Name={{ item.name }}
+            GenericName={{ item.generic_name }}
+            Comment={{ item.comment }}
+            Exec=mate-terminal --command "expect /opt/bin/cmd.sh '{{ item.exec }}'"
+            Terminal=false
+            Type=Application
+            Categories=Slingshot
+        loop:
+          - { file: 'aircrack-ng', name: 'aircrack-ng', generic_name: 'Wireless Tool', comment: 'Crack 802.11 WEP and WPA/WPA2-PSK keys', exec: 'aircrack-ng --help' }
+          - { file: 'asleap', name: 'Asleap', generic_name: 'Wireless Tool', comment: 'Actively recover LEAP/PPTP passwords', exec: 'asleap -h' }
+          - { file: 'beef', name: 'BeEF', generic_name: 'Exploitation Tool', comment: 'Browser Exploitation Framework', exec: 'beef -h' }
+          - { file: 'bettercap', name: 'bettercap', generic_name: 'Sniffer', comment: 'Swiss Army knife for network reconnaissance and MITM attacks', exec: 'bettercap -h' }
+          - { file: 'burp', name: 'Burp Suite', generic_name: 'Web App Tool', comment: 'Platform for security testing of web applications', exec: 'burp' }
+          - { file: 'checksec', name: 'checksec', generic_name: 'Scanner', comment: 'Scan for Linux file system vulnerabilities', exec: 'checksec -h' }
+          - { file: 'cowpatty', name: 'cowpatty', generic_name: 'Wireless Tool', comment: 'WPA-PSK dictionary attack', exec: 'cowpatty -h' }
+          - { file: 'empire', name: 'Empire', generic_name: 'Post-Exploitation Tool', comment: 'PowerShell post-exploitation framework', exec: 'sudo empire' }
+          - { file: 'eql', name: 'EQL', generic_name: 'Database Query', comment: 'Event Query Language for Elastic', exec: 'eql -h' }
+          - { file: 'ettercap', name: 'ettercap', generic_name: 'Sniffer', comment: 'A suite for MITM attacks', exec: 'ettercap -h' }
+          - { file: 'eyewitness', name: 'EyeWitness', generic_name: 'Information Gathering', comment: 'Capture web app screenshots', exec: 'eyewitness -h' }
+          - { file: 'flamingo', name: 'Flamingo', generic_name: 'Exploitation Tool', comment: 'Capture credentials sprayed across the network', exec: 'flamingo -h' }
+          - { file: 'hashcat', name: 'hashcat', generic_name: 'Password Tool', comment: 'Fast and flexible password hash cracker', exec: 'hashcat -h' }
+          - { file: 'hydra', name: 'thc-hydra', generic_name: 'Password Tool', comment: 'Online password guesser', exec: 'hydra -h' }
+          - { file: 'john', name: 'John', generic_name: 'Password Tool', comment: 'Smart password hash cracker', exec: 'john -h' }
+          - { file: 'kismet', name: 'Kismet', generic_name: 'Wireless Tool', comment: 'Scan for wifi networks', exec: 'kismet -h' }
+          - { file: 'koadic', name: 'koadic', generic_name: 'Post-Exploitation Tool', comment: 'Windows post-exploitation rootkit', exec: 'koadic -h' }
+          - { file: 'masscan', name: 'masscan', generic_name: 'Scanner', comment: 'Internet-scale, asynchronous port scanner', exec: 'masscan -h' }
+          - { file: 'metasploit', name: 'Metasploit Framework', generic_name: 'Exploitation Tool', comment: 'Penetration testing framework', exec: 'msfconsole -h' }
+          - { file: 'mimikatz', name: 'Mimikatz', generic_name: 'Post-Exploitation', comment: 'Gather credentials from Windows systems', exec: 'mimikatz.py -h' }
+          - { file: 'nikto', name: 'Nikto', generic_name: 'Information Gathering', comment: 'Scan web servers for vulnerabilities', exec: 'nikto -h' }
+          - { file: 'nmap', name: 'Nmap', generic_name: 'Scanner', comment: 'Flexible network scanner', exec: 'nmap -h' }
+          - { file: 'padbuster', name: 'PadBuster', generic_name: 'Web App Tool', comment: 'Automate Padding Oracle attacks', exec: 'padbuster -h' }
+          - { file: 'powershell', name: 'PowerShell', generic_name: 'Utility', comment: 'Microsoft PowerShell', exec: 'pwsh -h' }
+          - { file: 'ptf', name: 'ptf', generic_name: 'Utility', comment: 'The PenTesters Framework', exec: 'sudo ptf -h' }
+          - { file: 'recon-ng', name: 'recon-ng', generic_name: 'Information Gathering', comment: 'Web-based reconnaissance framework', exec: 'recon-ng' }
+          - { file: 'responder', name: 'Responder', generic_name: 'Sniffer', comment: 'NBT-NS/LLMNR Responder', exec: 'responder -h' }
+          - { file: 'searchsploit', name: 'searchsploit', generic_name: 'Exploitation Tool', comment: 'Search the Exploit Database', exec: 'searchsploit -h' }
+          - { file: 'setoolkit', name: 'setoolkit', generic_name: 'Information Gathering', comment: 'The Social-Engineer Toolkit', exec: 'sudo setoolkit' }
+          - { file: 'snmpcheck', name: 'snmpcheck', generic_name: 'Information Gathering', comment: 'Enumerate SNMP services', exec: 'snmpcheck -h' }
+          - { file: 'sqlmap', name: 'sqlmap', generic_name: 'Exploitation Tool', comment: 'Find and exploit SQL injection vulnerabilities', exec: 'sqlmap -h' }
+          - { file: 'unicornscan', name: 'unicornscan', generic_name: 'Scanner', comment: 'Asynchronous port scanner', exec: 'unicornscan -h' }
+          - { file: 'upx', name: 'UPX', generic_name: 'Utility', comment: 'The Ultimate Packer for eXecutables', exec: 'upx -h' }
+          - { file: 'veil', name: 'Veil', generic_name: 'Exploitation Tool', comment: 'Generate Metasploit payloads that bypass anti-virus', exec: 'veil' }
+          - { file: 'weirdaal', name: 'weirdAAL', generic_name: 'Exploitation Tool', comment: 'AWS Attack Library', exec: 'weirdaal -h' }
+          - { file: 'wpscan', name: 'wpscan', generic_name: 'Web App Tool', comment: 'Scan for WordPress vulnerabilities', exec: 'wpscan -h' }
+          - { file: 'zap', name: 'ZAP', generic_name: 'Web App Tool', comment: 'OWASP Zed Attack Proxy', exec: 'zap' }
+        when: create_appmenu is defined and create_appmenu
 
 # TODO:
 # IronWasp

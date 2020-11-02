@@ -11,7 +11,9 @@
     - pkg-config
 
 - name: Download dump1090 via Git
-  git:
+  include_role:
+    name: git_cached
+  vars:
     repo: "{{ dump1090_url }}"
     version: "{{ dump1090_version}}"
     dest: "{{ dump1090_install_path }}"

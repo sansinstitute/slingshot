@@ -1,0 +1,30 @@
+---
+- name: Create burpsuite install directory
+  file:
+    path: "{{ burpsuite_install_path }}/"
+    state: directory
+
+- name: Copy burpsuite jar
+  copy:
+    src: "{{ burpsuite_file }}"
+    dest: "{{ burpsuite_install_path }}/"
+
+- name: Create launcher script
+  blockinfile:
+    path: "{{  burpsuite_install_path }}/burp-bootstrap.sh"
+    create: yes
+    mode: 0775
+    block: |
+      #!/bin/bash
+
+      echo "Starting Burp..." 
+      cd {{ burpsuite_install_path }} && java -jar {{ burpsuite_file }} "$@"
+    
+- name: Create symlink
+  file:
+    src: "{{ burpsuite_install_path}}/burp-bootstrap.sh"
+    dest: "{{ symlink_path }}/burp"
+    state: link
+  when: create_symlinks is defined and create_symlinks
+
+- import_tasks: "tasks/mark_installed.yml"
